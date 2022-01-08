@@ -21,6 +21,7 @@ def load_lines(data_path):
                 Line(line_name=line_name, st_list=station_list, is_ring=is_ring)
             )
             break
+        strs = strs.strip("\n").strip()
         strs = strs.split(" ")
         if strs[0] == "L":
             lines.append(

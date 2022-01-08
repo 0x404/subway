@@ -1,27 +1,31 @@
 INF = 10000
 
-class Station():
+
+class Station:
     """
     station class
     """
+
     def __init__(self, st_name, is_trans=False):
         self.station_name = st_name
         self.trans = is_trans
 
     @property
     def name(self):
-        '''get station's name'''
+        """get station's name"""
         return self.station_name
 
     @property
     def is_trans(self):
-        '''whther a station is a transfer station'''
+        """whther a station is a transfer station"""
         return self.trans
 
-class Line():
+
+class Line:
     """
     line class, consists of stations
     """
+
     def __init__(self, line_name, st_list, is_ring=False):
         self.line_name = line_name
         self.st_list = st_list
@@ -29,18 +33,20 @@ class Line():
 
     @property
     def is_ring(self):
-        '''whether the line is a ring'''
+        """whether the line is a ring"""
         return self.ring
 
     @property
     def station_list(self):
-        '''get station list of a line'''
+        """get station list of a line"""
         return self.st_list
 
-class SubwaySys():
+
+class SubwaySys:
     """
     subwaySys class, consists of lines
     """
+
     def __init__(self, line_list=None):
         self.str2st = {}
         self.nexto = {}
@@ -71,32 +77,31 @@ class SubwaySys():
         if isinstance(end, str):
             end = self.str2st[end]
         for station in self.nexto.keys():
-            dist[station] = INF
-            last_st[station] = station
+            dist[station.name] = INF
+            last_st[station.name] = station.name
 
-        queue = [0 for _ in range(len(self.nexto))]
+        queue = [start]
         head, tail = 0, 0
-        queue[0] = start
-        dist[start] = 0
-
+        dist[start.name] = 0
         while head <= tail:
             now_st = queue[head]
             head += 1
             for nex_st in self.nexto[now_st]:
-                if dist[nex_st] > dist[now_st] + 1:
-                    if dist[nex_st] == INF:
+                if dist[nex_st.name] > dist[now_st.name] + 1:
+                    if dist[nex_st.name] == INF:
                         tail += 1
-                        queue[tail] = nex_st
-                    dist[nex_st] = dist[now_st] + 1
-                    last_st[nex_st] = now_st
+                        queue.append(nex_st)
+                    dist[nex_st.name] = dist[now_st.name] + 1
+                    last_st[nex_st.name] = now_st.name
 
         path = []
-        now_st = end
+        now_st = end.name
         while last_st[now_st] != now_st:
-            path.append(now_st)
-        path.append(now_st)
+            path.append(self.str2st[now_st])
+            now_st = last_st[now_st]
+        path.append(self.str2st[now_st])
+        path.reverse()
         return path
-        # return reversed(path)
 
     def _link(self, st_i, st_j):
         """
@@ -104,11 +109,16 @@ class SubwaySys():
         :param st_i: a station obejct
         :param st_j: a station object
         """
+        if st_i.name not in self.str2st.keys():
+            self.str2st[st_i.name] = Station(st_i.name, st_i.is_trans)
+        if st_j.name not in self.str2st.keys():
+            self.str2st[st_j.name] = Station(st_j.name, st_j.is_trans)
+
+        st_i = self.str2st[st_i.name]
+        st_j = self.str2st[st_j.name]
         if st_i not in self.nexto.keys():
-            self.str2st[st_i.station_name] = st_i
             self.nexto[st_i] = []
         if st_j not in self.nexto.keys():
-            self.str2st[st_j.station_name] = st_j
             self.nexto[st_j] = []
         if st_i not in self.nexto[st_j]:
             self.nexto[st_j].append(st_i)
