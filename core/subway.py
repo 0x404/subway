@@ -5,6 +5,8 @@ from model import SubwaySys
 if __name__ == "__main__":
     lines = utils.load_lines("../data/beijing-subway.txt")
     subway = SubwaySys(lines)
+    subway.test_by_file("../data/testfile.txt")
+
     while True:
         cmd = input()
         cmd = cmd.strip().split(" ")
