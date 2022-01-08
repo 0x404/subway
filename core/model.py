@@ -129,3 +129,43 @@ class SubwaySys:
             self.nexto[st_j].append(st_i)
         if st_j not in self.nexto[st_i]:
             self.nexto[st_i].append(st_j)
+
+    def get_station_number(self):
+        return len(self.str2st)
+
+    def test_by_file(self,file_path):
+        """
+        test all subways by file of path
+        :param file_path:
+        """
+        visited = []
+        file = open(file_path, mode="r", encoding="utf-8")
+
+        while True:
+            test_line = file.readline()
+            if not test_line:
+                break
+            test_line = test_line.strip("\n").strip()
+            test_line = test_line.split(" ")
+
+            # 当前线路是否连接合法
+            for index in range(len(test_line)-1):
+                if test_line[index] not in self.str2st.keys() or test_line[index + 1] not in self.str2st.keys():
+                    print('error')
+                    return
+                # 已访问的站点
+                if test_line[index] not in visited:
+                    visited.append(test_line[index])
+                if test_line[index + 1] not in visited:
+                    visited.append(test_line[index + 1])
+                st_i = self.str2st[test_line[index]]
+                st_j = self.str2st[test_line[index + 1]]
+                if st_i not in self.nexto[st_j]:
+                    print("error! 不合理的站点连接: " + test_line[index] + " " + test_line[index + 1])
+                    return
+
+        for name in self.str2st.keys():
+            if str(name) not in visited:
+                print("false! 未访问的站点: " + str(name))
+
+        # print("true!")
