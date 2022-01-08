@@ -1,9 +1,9 @@
-import data_loader
+import utils
 from model import SubwaySys
 
 
 if __name__ == "__main__":
-    lines = data_loader.load_lines("../data/beijing-subway.txt")
+    lines = utils.load_lines("../data/beijing-subway.txt")
     subway = SubwaySys(lines)
     while True:
         cmd = input()

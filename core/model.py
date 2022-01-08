@@ -20,6 +20,11 @@ class Station:
         """whther a station is a transfer station"""
         return self.trans
 
+    @property
+    def belong(self):
+        """which line a station belong to"""
+        return self.belong_to
+
 
 class Line:
     """
@@ -48,8 +53,8 @@ class SubwaySys:
     """
 
     def __init__(self, line_list=None):
-        self.str2st = {}
-        self.nexto = {}
+        self.str2st = {}  # station_name -> station
+        self.nexto = {}  # station -> station_list
         if line_list is not None:
             for line in line_list:
                 self.add_line(line)
