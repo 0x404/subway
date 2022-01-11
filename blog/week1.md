@@ -6,8 +6,12 @@
 
 ### ✔️成果
 
-完成地铁路线的文本输入
-* 
+* 1.11
+类似Edge[Point] = new edge(vis,name)的存储边方式
+增加Edge类 封装路线名和访问点
+SubSys中增加get_edge_belong 两个station查询路线名 
+_link调整接口参数增加路线字符串
+shortest_path中先取边 再取点 
 * 
 * 
 
