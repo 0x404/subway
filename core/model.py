@@ -20,10 +20,25 @@ class Station:
         """whther a station is a transfer station"""
         return self.trans
 
+
 class Edge:
     """
     line edge
+    :param st_j(Station)    : Edge visited station
+    :param line_belongs(str): this edge belongs which line
     """
+
+    def __init__(self, st_j, line_belongs):
+        self.st_j = st_j
+        self.line_belongs = line_belongs
+
+    @property
+    def vis_station(self):
+        return self.st_j
+
+    @property
+    def lines_belongs(self):
+        return self.line_belongs
 
 
 class Line:
@@ -59,15 +74,31 @@ class SubwaySys:
             for line in line_list:
                 self.add_line(line)
 
+    def get_edge_belongs(self, st_i, st_j):
+        """
+        :param st_i: station name one
+        :param st_j: station name two
+        :return: line_name
+        """
+        if isinstance(st_i, str):
+            st_i = self.str2st[st_i]
+        if isinstance(st_j, str):
+            st_j = self.str2st[st_j]
+
+        for nxt_ed in self.nexto[st_i]:
+            if nxt_ed.vis_station() == st_j:
+                return nxt_ed.lines_belongs()
+        return "null??"
+
     def add_line(self, line):
         """
         add line to subway system
         :param line: a line object
         """
         for i in range(len(line.station_list) - 1):
-            self._link(line.station_list[i], line.station_list[i + 1])
+            self._link(line.station_list[i], line.station_list[i + 1], line.line_name)
         if line.is_ring and len(line.station_list) > 1:
-            self._link(line.station_list[0], line.station_list[-1])
+            self._link(line.station_list[0], line.station_list[-1], line.line_name)
 
     def shortest_path(self, start, end):
         """
@@ -91,7 +122,8 @@ class SubwaySys:
         while head <= tail:
             now_st = queue[head]
             head += 1
-            for nex_st in self.nexto[now_st]:
+            for nex_ed in self.nexto[now_st]:
+                nex_st = nex_ed.vis_station()
                 if dist[nex_st.name] > dist[now_st.name] + 1:
                     if dist[nex_st.name] == INF:
                         tail += 1
@@ -102,13 +134,14 @@ class SubwaySys:
         path = []
         now_st = end.name
         while last_st[now_st] != now_st:
+            print(str(now_st) + "  " + str(last_st[now_st]) + " " + self.get_edge_belongs(now_st,last_st[now_st]))
             path.append(self.str2st[now_st])
             now_st = last_st[now_st]
         path.append(self.str2st[now_st])
         path.reverse()
         return path
 
-    def _link(self, st_i, st_j):
+    def _link(self, st_i, st_j, edge_belong):
         """
         create an edge between station i and station j
         :param st_i: a station obejct
@@ -126,9 +159,9 @@ class SubwaySys:
         if st_j not in self.nexto.keys():
             self.nexto[st_j] = []
         if st_i not in self.nexto[st_j]:
-            self.nexto[st_j].append(st_i)
+            self.nexto[st_j].append(Edge(st_i, edge_belong))
         if st_j not in self.nexto[st_i]:
-            self.nexto[st_i].append(st_j)
+            self.nexto[st_i].append(Edge(st_j, edge_belong))
 
     def test_by_file(self, file_path):
         """
@@ -145,7 +178,7 @@ class SubwaySys:
             test_line = test_line.strip("\n").strip()
             test_line = test_line.split(" ")
 
-            # 当前线路是否连接合法个大头鬼
+            # 当前线路是否连接合法个
             for index in range(len(test_line) - 1):
                 if test_line[index] not in self.str2st or test_line[index + 1] not in self.str2st:
                     print("error")
