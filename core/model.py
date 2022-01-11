@@ -20,6 +20,10 @@ class Station:
         """whther a station is a transfer station"""
         return self.trans
 
+class Edge:
+    """
+    line edge
+    """
 
 
 class Line:
@@ -141,7 +145,7 @@ class SubwaySys:
             test_line = test_line.strip("\n").strip()
             test_line = test_line.split(" ")
 
-            # 当前线路是否连接合法
+            # 当前线路是否连接合法个大头鬼
             for index in range(len(test_line) - 1):
                 if test_line[index] not in self.str2st or test_line[index + 1] not in self.str2st:
                     print("error")
