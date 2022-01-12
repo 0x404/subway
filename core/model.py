@@ -1,3 +1,4 @@
+'''model'''
 INF: int = 10000
 
 
@@ -34,10 +35,12 @@ class Edge:
 
     @property
     def vis_station(self):
+        """which station an edge link to"""
         return self.st_j
 
     @property
     def lines_belongs(self):
+        """which line an edge belong to"""
         return self.line_belongs
 
 
@@ -134,7 +137,13 @@ class SubwaySys:
         path = []
         now_st = end.name
         while last_st[now_st] != now_st:
-            print(str(now_st) + "  " + str(last_st[now_st]) + " " + self.get_edge_belongs(now_st,last_st[now_st]))
+            print(
+                str(now_st)
+                + "  "
+                + str(last_st[now_st])
+                + " "
+                + self.get_edge_belongs(now_st, last_st[now_st])
+            )
             path.append(self.str2st[now_st])
             now_st = last_st[now_st]
         path.append(self.str2st[now_st])
@@ -180,7 +189,10 @@ class SubwaySys:
 
             # 当前线路是否连接合法个
             for index in range(len(test_line) - 1):
-                if test_line[index] not in self.str2st or test_line[index + 1] not in self.str2st:
+                if (
+                    test_line[index] not in self.str2st
+                    or test_line[index + 1] not in self.str2st
+                ):
                     print("error")
                     return
 
