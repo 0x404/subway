@@ -1,4 +1,4 @@
-'''model'''
+"""model"""
 INF: int = 10000
 
 
@@ -21,6 +21,11 @@ class Station:
         """whther a station is a transfer station"""
         return self.trans
 
+    def __str__(self):
+        if self.trans:
+            return "station(%s, transfer_st)" % (self.station_name)
+        return "station(%s, normal_st)" % (self.station_name)
+
 
 class Edge:
     """
@@ -29,17 +34,17 @@ class Edge:
     :param line_belongs(str): this edge belongs which line
     """
 
-    def __init__(self, st_j, line_belongs):
-        self.st_j = st_j
-        self.line_belongs = line_belongs
+    def __init__(self, station_to, belong_to):
+        self.st_j = station_to
+        self.line_belongs = belong_to
 
     @property
-    def vis_station(self):
+    def station_to(self):
         """which station an edge link to"""
         return self.st_j
 
     @property
-    def lines_belongs(self):
+    def belong_to(self):
         """which line an edge belong to"""
         return self.line_belongs
 
@@ -55,6 +60,11 @@ class Line:
         self.ring = is_ring
 
     @property
+    def name(self):
+        """a line's name"""
+        return self.line_name
+
+    @property
     def is_ring(self):
         """whether the line is a ring"""
         return self.ring
@@ -63,6 +73,9 @@ class Line:
     def station_list(self):
         """get station list of a line"""
         return self.st_list
+
+    def __str__(self):
+        return "地铁线: " + self.line_name
 
 
 class SubwaySys:
@@ -89,9 +102,11 @@ class SubwaySys:
             st_j = self.str2st[st_j]
 
         for nxt_ed in self.nexto[st_i]:
-            if nxt_ed.vis_station() == st_j:
-                return nxt_ed.lines_belongs()
-        return "null??"
+            if nxt_ed.station_to == st_j:
+                return nxt_ed.belong_to
+        raise Exception(
+            "SubwaySys_get_edge_belongs: " + st_i + " " + st_j + " not connected."
+        )
 
     def add_line(self, line):
         """
@@ -99,9 +114,32 @@ class SubwaySys:
         :param line: a line object
         """
         for i in range(len(line.station_list) - 1):
-            self._link(line.station_list[i], line.station_list[i + 1], line.line_name)
+            self._link(line.station_list[i], line.station_list[i + 1], line.name)
         if line.is_ring and len(line.station_list) > 1:
-            self._link(line.station_list[0], line.station_list[-1], line.line_name)
+            self._link(line.station_list[0], line.station_list[-1], line.name)
+
+    def _decorate_path(self, path):
+        """
+        decorate station list generate from algs (e.g. shortest_path)
+        :param path: list of stations, e.g. [station1, station2, ..., station n]
+        :return : list of [station, msg], e.g. [[station1, msg1], [station2, msg2], ...]
+        """
+        assert len(path) >= 1
+
+        ans = [[path[0], None]]
+        if len(path) == 1:
+            return ans
+
+        now_line = self.get_edge_belongs(path[0], path[1])
+        for i in range(1, len(path) - 1):
+            nex_line = self.get_edge_belongs(path[i], path[i + 1])
+            if now_line != nex_line:
+                ans.append([path[i], "换乘" + nex_line])
+                now_line = nex_line
+            else:
+                ans.append([path[i], None])
+        ans.append([path[-1], None])
+        return ans
 
     def shortest_path(self, start, end):
         """
@@ -126,7 +164,7 @@ class SubwaySys:
             now_st = queue[head]
             head += 1
             for nex_ed in self.nexto[now_st]:
-                nex_st = nex_ed.vis_station()
+                nex_st = nex_ed.station_to
                 if dist[nex_st.name] > dist[now_st.name] + 1:
                     if dist[nex_st.name] == INF:
                         tail += 1
@@ -137,18 +175,11 @@ class SubwaySys:
         path = []
         now_st = end.name
         while last_st[now_st] != now_st:
-            print(
-                str(now_st)
-                + "  "
-                + str(last_st[now_st])
-                + " "
-                + self.get_edge_belongs(now_st, last_st[now_st])
-            )
             path.append(self.str2st[now_st])
             now_st = last_st[now_st]
         path.append(self.str2st[now_st])
         path.reverse()
-        return path
+        return self._decorate_path(path)
 
     def _link(self, st_i, st_j, edge_belong):
         """
@@ -163,14 +194,14 @@ class SubwaySys:
 
         st_i = self.str2st[st_i.name]
         st_j = self.str2st[st_j.name]
-        if st_i not in self.nexto.keys():
+        if st_i not in self.nexto:
             self.nexto[st_i] = []
-        if st_j not in self.nexto.keys():
+        if st_j not in self.nexto:
             self.nexto[st_j] = []
         if st_i not in self.nexto[st_j]:
-            self.nexto[st_j].append(Edge(st_i, edge_belong))
+            self.nexto[st_j].append(Edge(station_to=st_i, belong_to=edge_belong))
         if st_j not in self.nexto[st_i]:
-            self.nexto[st_i].append(Edge(st_j, edge_belong))
+            self.nexto[st_i].append(Edge(station_to=st_j, belong_to=edge_belong))
 
     def test_by_file(self, file_path):
         """
