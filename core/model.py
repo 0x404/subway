@@ -222,9 +222,12 @@ class SubwaySys:
             test_line = test_line.split(" ")
 
             # 当前线路是否连接合法
-            for index in range(len(test_line)-1):
-                if test_line[index] not in self.str2st.keys() or test_line[index + 1] not in self.str2st.keys():
-                    print('error')
+            for index in range(len(test_line) - 1):
+                if (
+                    test_line[index] not in self.str2st
+                    or test_line[index + 1] not in self.str2st
+                ):
+                    print("error")
                     return
                 # 已访问的站点
                 if test_line[index] not in visited:
@@ -233,6 +236,7 @@ class SubwaySys:
                     visited.append(test_line[index + 1])
                 st_i = self.str2st[test_line[index]]
                 st_j = self.str2st[test_line[index + 1]]
+
                 if st_i not in self.nexto[st_j]:
                     print("error! 不合理的站点连接: " + test_line[index] + " " + test_line[index + 1])
                     return
