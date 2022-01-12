@@ -6,7 +6,6 @@ class Station:
     """
     station class
     """
-
     def __init__(self, st_name, is_trans=False):
         self.station_name = st_name
         self.trans = is_trans
@@ -30,7 +29,7 @@ class Station:
 class Edge:
     """
     line edge
-    :param st_j(Station)    : Edge visited station
+    :param st_j(str)        : Edge visited station
     :param line_belongs(str): this edge belongs which line
     """
 
@@ -79,13 +78,14 @@ class Line:
 
 
 class SubwaySys:
+
     """
     subwaySys class, consists of lines
     """
 
     def __init__(self, line_list=None):
-        self.str2st = {}  # station_name -> station
-        self.nexto = {}  # station -> edge
+        self.str2st = {}    # station_name -> station
+        self.nexto = {}     # station_name -> edge
         if line_list is not None:
             for line in line_list:
                 self.add_line(line)
@@ -101,7 +101,7 @@ class SubwaySys:
         if isinstance(st_j, str):
             st_j = self.str2st[st_j]
 
-        for nxt_ed in self.nexto[st_i]:
+        for nxt_ed in self.nexto[st_i.name]:
             if nxt_ed.station_to == st_j:
                 return nxt_ed.belong_to
         raise Exception(
@@ -153,17 +153,20 @@ class SubwaySys:
             start = self.str2st[start]
         if isinstance(end, str):
             end = self.str2st[end]
-        for station in self.nexto.keys():
-            dist[station.name] = INF
-            last_st[station.name] = station.name
+        for station in self.nexto:
+            dist[station] = INF
+            last_st[station] = station
 
+        # Station
         queue = [start]
         head, tail = 0, 0
+
+        # Station name
         dist[start.name] = 0
         while head <= tail:
             now_st = queue[head]
             head += 1
-            for nex_ed in self.nexto[now_st]:
+            for nex_ed in self.nexto[now_st.name]:
                 nex_st = nex_ed.station_to
                 if dist[nex_st.name] > dist[now_st.name] + 1:
                     if dist[nex_st.name] == INF:
@@ -184,7 +187,7 @@ class SubwaySys:
     def _link(self, st_i, st_j):
         """
         create an edge between station i and station j
-        :param st_i: a station obejct
+        :param st_i: a station object
         :param st_j: a station object
         """
         if st_i.name not in self.str2st.keys():
@@ -194,14 +197,16 @@ class SubwaySys:
 
         st_i = self.str2st[st_i.name]
         st_j = self.str2st[st_j.name]
-        if st_i not in self.nexto:
-            self.nexto[st_i] = []
-        if st_j not in self.nexto:
-            self.nexto[st_j] = []
-        if st_i not in self.nexto[st_j]:
-            self.nexto[st_j].append(Edge(station_to=st_i, belong_to=edge_belong))
-        if st_j not in self.nexto[st_i]:
-            self.nexto[st_i].append(Edge(station_to=st_j, belong_to=edge_belong))
+
+        if st_i.name not in self.nexto:
+            self.nexto[st_i.name] = []
+        if st_j.name not in self.nexto:
+            self.nexto[st_j.name] = []
+
+        if Edge(st_i, edge_belong) not in self.nexto[st_j.name]:
+            self.nexto[st_j.name].append(Edge(station_to=st_i, belong_to=edge_belong))
+        if Edge(st_j, edge_belong) not in self.nexto[st_i.name]:
+            self.nexto[st_i.name].append(Edge(station_to=st_j, belong_to=edge_belong))
 
     def get_station_number(self):
         return len(self.str2st)
