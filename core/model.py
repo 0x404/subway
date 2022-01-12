@@ -1,4 +1,5 @@
-INF = 10000
+'''model'''
+INF: int = 10000
 
 
 class Station:
@@ -20,10 +21,27 @@ class Station:
         """whther a station is a transfer station"""
         return self.trans
 
+
+class Edge:
+    """
+    line edge
+    :param st_j(Station)    : Edge visited station
+    :param line_belongs(str): this edge belongs which line
+    """
+
+    def __init__(self, st_j, line_belongs):
+        self.st_j = st_j
+        self.line_belongs = line_belongs
+
     @property
-    def belong(self):
-        """which line a station belong to"""
-        return self.belong_to
+    def vis_station(self):
+        """which station an edge link to"""
+        return self.st_j
+
+    @property
+    def lines_belongs(self):
+        """which line an edge belong to"""
+        return self.line_belongs
 
 
 class Line:
