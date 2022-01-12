@@ -6,7 +6,6 @@ class Station:
     """
     station class
     """
-
     def __init__(self, st_name, is_trans=False):
         self.station_name = st_name
         self.trans = is_trans
@@ -84,8 +83,8 @@ class SubwaySys:
     """
 
     def __init__(self, line_list=None):
-        self.str2st = {}  # station_name -> station
-        self.nexto = {}  # station -> edge
+        self.str2st = {}    # station_name -> station
+        self.nexto = {}     # station -> edge
         if line_list is not None:
             for line in line_list:
                 self.add_line(line)
@@ -130,9 +129,9 @@ class SubwaySys:
         if len(path) == 1:
             return ans
 
-        now_line = self.get_edge_belongs(path[0].name, path[1].name)
+        now_line = self.get_edge_belongs(path[0], path[1])
         for i in range(1, len(path) - 1):
-            nex_line = self.get_edge_belongs(path[i].name, path[i + 1].name)
+            nex_line = self.get_edge_belongs(path[i], path[i + 1])
             if now_line != nex_line:
                 ans.append([path[i], "换乘" + nex_line])
                 now_line = nex_line
