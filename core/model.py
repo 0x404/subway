@@ -218,7 +218,7 @@ class SubwaySys:
             test_line = test_line.strip("\n").strip()
             test_line = test_line.split(" ")
 
-            # 当前线路是否连接合法个
+            # 当前线路是否连接合法
             for index in range(len(test_line) - 1):
                 if (
                     test_line[index] not in self.str2st
@@ -235,6 +235,7 @@ class SubwaySys:
 
                 st_i = self.str2st[test_line[index]]
                 st_j = self.str2st[test_line[index + 1]]
+
                 if st_i not in self.nexto[st_j]:
                     print(
                         "error! 不合理的站点连接: "
