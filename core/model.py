@@ -84,8 +84,8 @@ class SubwaySys:
     """
 
     def __init__(self, line_list=None):
-        self.str2st = {}  # station_name -> station
-        self.nexto = {}  # station -> station_list
+        self.str2st = {}    # station_name -> station
+        self.nexto = {}     # station -> edge
         if line_list is not None:
             for line in line_list:
                 self.add_line(line)
