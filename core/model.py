@@ -82,7 +82,6 @@ class SubwaySys:
     """
     subwaySys class, consists of lines
     """
-
     def __init__(self, line_list=None):
         self.str2st = {}    # station_name -> station
         self.nexto = {}     # station_name -> edge
@@ -96,10 +95,10 @@ class SubwaySys:
         :param st_j: station name two
         :return: line_name
         """
-        if isinstance(st_i, str):
-            st_i = self.str2st[st_i]
-        if isinstance(st_j, str):
-            st_j = self.str2st[st_j]
+        if isinstance(st_i, Station):
+            st_i = st_i.name
+        if isinstance(st_j, Station):
+            st_j = st_j.name
 
         for nxt_ed in self.nexto[st_i.name]:
             if nxt_ed.station_to == st_j:
@@ -107,6 +106,17 @@ class SubwaySys:
         raise Exception(
             "SubwaySys_get_edge_belongs: " + st_i + " " + st_j + " not connected."
         )
+
+    def is_next(self, st_i_name, st_j_name):
+        """
+        :param   st_i_name: origin station (str)
+        :param   st_j_name: judged station (str)
+        :return: st_j whether next to st_i
+        """
+        for nex_ed in self.nexto[st_i_name]:
+            if nex_ed.station_to == st_j_name:
+                return True
+        return False
 
     def add_line(self, line):
         """
@@ -157,8 +167,8 @@ class SubwaySys:
             dist[station] = INF
             last_st[station] = station
 
-        # Station
-        queue = [start]
+        # str as key
+        queue = [start.name]
         head, tail = 0, 0
 
         # Station name
@@ -168,12 +178,12 @@ class SubwaySys:
             head += 1
             for nex_ed in self.nexto[now_st.name]:
                 nex_st = nex_ed.station_to
-                if dist[nex_st.name] > dist[now_st.name] + 1:
-                    if dist[nex_st.name] == INF:
+                if dist[nex_st] > dist[now_st] + 1:
+                    if dist[nex_st] == INF:
                         tail += 1
                         queue.append(nex_st)
-                    dist[nex_st.name] = dist[now_st.name] + 1
-                    last_st[nex_st.name] = now_st.name
+                    dist[nex_st] = dist[now_st] + 1
+                    last_st[nex_st] = now_st
 
         path = []
         now_st = end.name
@@ -203,15 +213,12 @@ class SubwaySys:
         if st_j.name not in self.nexto:
             self.nexto[st_j.name] = []
 
-        if Edge(st_i, edge_belong) not in self.nexto[st_j.name]:
-            self.nexto[st_j.name].append(Edge(station_to=st_i, belong_to=edge_belong))
-        if Edge(st_j, edge_belong) not in self.nexto[st_i.name]:
-            self.nexto[st_i.name].append(Edge(station_to=st_j, belong_to=edge_belong))
+        if not self.is_next(st_i_name=st_j.name, st_j_name=st_i.name):
+            self.nexto[st_j.name].append(Edge(station_to=st_i.name, belong_to=edge_belong))
+        if not self.is_next(st_i_name=st_i.name, st_j_name=st_j.name):
+            self.nexto[st_i.name].append(Edge(station_to=st_j.name, belong_to=edge_belong))
 
-    def get_station_number(self):
-        return len(self.str2st)
-
-    def test_by_file(self,file_path):
+    def test_by_file(self, file_path):
         """
         test all subways by file of path
         :param file_path:
@@ -229,8 +236,8 @@ class SubwaySys:
             # 当前线路是否连接合法
             for index in range(len(test_line) - 1):
                 if (
-                    test_line[index] not in self.str2st
-                    or test_line[index + 1] not in self.str2st
+                        test_line[index] not in self.str2st
+                        or test_line[index + 1] not in self.str2st
                 ):
                     print("error")
                     return
