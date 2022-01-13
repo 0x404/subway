@@ -1,10 +1,11 @@
 """subway"""
-import utils
-from model import SubwaySys
+from core import utils
+from core.model import SubwaySys
 
 
 if __name__ == "__main__":
-    lines = utils.load_lines("../data/beijing-subway.txt")
+    # lines from 1 to len(lines - 1)
+    lines = utils.load_lines("data/beijing-subway.txt")
     subway = SubwaySys(lines)
     subway.test_by_file("../data/testfile.txt")
 

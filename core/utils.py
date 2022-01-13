@@ -1,6 +1,6 @@
 """utils"""
-from model import Station
-from model import Line
+from .model import Station
+from .model import Line
 
 
 def load_lines(data_path):
