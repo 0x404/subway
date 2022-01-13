@@ -107,14 +107,14 @@ class SubwaySys:
             "SubwaySys_get_edge_belongs: " + st_i + " " + st_j + " not connected."
         )
 
-    def is_next(self, st_i_name, st_j_name):
+    def is_next(self, st_i, st_j):
         """
-        :param   st_i_name: origin station (str)
-        :param   st_j_name: judged station (str)
+        :param   st_i: origin station (str)
+        :param   st_j: judged station (str)
         :return: st_j whether next to st_i
         """
-        for nex_ed in self.nexto[st_i_name]:
-            if nex_ed.station_to == st_j_name:
+        for nex_ed in self.nexto[st_i]:
+            if nex_ed.station_to == st_j:
                 return True
         return False
 
@@ -213,9 +213,9 @@ class SubwaySys:
         if st_j.name not in self.nexto:
             self.nexto[st_j.name] = []
 
-        if not self.is_next(st_i_name=st_j.name, st_j_name=st_i.name):
+        if not self.is_next(st_i=st_j.name, st_j=st_i.name):
             self.nexto[st_j.name].append(Edge(station_to=st_i.name, belong_to=edge_belong))
-        if not self.is_next(st_i_name=st_i.name, st_j_name=st_j.name):
+        if not self.is_next(st_i=st_i.name, st_j=st_j.name):
             self.nexto[st_i.name].append(Edge(station_to=st_j.name, belong_to=edge_belong))
 
     def test_by_file(self, file_path):
