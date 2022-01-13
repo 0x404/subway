@@ -29,7 +29,7 @@ class Station:
 class Edge:
     """
     line edge
-    :param st_j(Station)    : Edge visited station
+    :param st_j(str)        : Edge visited station
     :param line_belongs(str): this edge belongs which line
     """
 
@@ -81,10 +81,9 @@ class SubwaySys:
     """
     subwaySys class, consists of lines
     """
-
     def __init__(self, line_list=None):
         self.str2st = {}    # station_name -> station
-        self.nexto = {}     # station -> edge
+        self.nexto = {}     # station_name -> edge
         if line_list is not None:
             for line in line_list:
                 self.add_line(line)
@@ -95,10 +94,10 @@ class SubwaySys:
         :param st_j: station name two
         :return: line_name
         """
-        if isinstance(st_i, str):
-            st_i = self.str2st[st_i]
-        if isinstance(st_j, str):
-            st_j = self.str2st[st_j]
+        if isinstance(st_i, Station):
+            st_i = st_i.name
+        if isinstance(st_j, Station):
+            st_j = st_j.name
 
         for nxt_ed in self.nexto[st_i]:
             if nxt_ed.station_to == st_j:
@@ -106,6 +105,17 @@ class SubwaySys:
         raise Exception(
             "SubwaySys_get_edge_belongs: " + st_i + " " + st_j + " not connected."
         )
+
+    def is_next(self, st_i_name, st_j_name):
+        """
+        :param   st_i_name: origin station (str)
+        :param   st_j_name: judged station (str)
+        :return: st_j whether next to st_i
+        """
+        for nex_ed in self.nexto[st_i_name]:
+            if nex_ed.station_to == st_j_name:
+                return True
+        return False
 
     def add_line(self, line):
         """
@@ -153,10 +163,11 @@ class SubwaySys:
         if isinstance(end, str):
             end = self.str2st[end]
         for station in self.nexto:
-            dist[station.name] = INF
-            last_st[station.name] = station.name
+            dist[station] = INF
+            last_st[station] = station
 
-        queue = [start]
+        # str as key
+        queue = [start.name]
         head, tail = 0, 0
         dist[start.name] = 0
         while head <= tail:
@@ -164,12 +175,12 @@ class SubwaySys:
             head += 1
             for nex_ed in self.nexto[now_st]:
                 nex_st = nex_ed.station_to
-                if dist[nex_st.name] > dist[now_st.name] + 1:
-                    if dist[nex_st.name] == INF:
+                if dist[nex_st] > dist[now_st] + 1:
+                    if dist[nex_st] == INF:
                         tail += 1
                         queue.append(nex_st)
-                    dist[nex_st.name] = dist[now_st.name] + 1
-                    last_st[nex_st.name] = now_st.name
+                    dist[nex_st] = dist[now_st] + 1
+                    last_st[nex_st] = now_st
 
         path = []
         now_st = end.name
@@ -183,7 +194,7 @@ class SubwaySys:
     def _link(self, st_i, st_j, edge_belong):
         """
         create an edge between station i and station j
-        :param st_i: a station obejct
+        :param st_i: a station object
         :param st_j: a station object
         """
         if st_i.name not in self.str2st:
@@ -193,14 +204,16 @@ class SubwaySys:
 
         st_i = self.str2st[st_i.name]
         st_j = self.str2st[st_j.name]
-        if st_i not in self.nexto:
-            self.nexto[st_i] = []
-        if st_j not in self.nexto:
-            self.nexto[st_j] = []
-        if st_i not in self.nexto[st_j]:
-            self.nexto[st_j].append(Edge(station_to=st_i, belong_to=edge_belong))
-        if st_j not in self.nexto[st_i]:
-            self.nexto[st_i].append(Edge(station_to=st_j, belong_to=edge_belong))
+
+        if st_i.name not in self.nexto:
+            self.nexto[st_i.name] = []
+        if st_j.name not in self.nexto:
+            self.nexto[st_j.name] = []
+
+        if not self.is_next(st_i_name=st_j.name, st_j_name=st_i.name):
+            self.nexto[st_j.name].append(Edge(station_to=st_i.name, belong_to=edge_belong))
+        if not self.is_next(st_i_name=st_i.name, st_j_name=st_j.name):
+            self.nexto[st_i.name].append(Edge(station_to=st_j.name, belong_to=edge_belong))
 
     def test_by_file(self, file_path):
         """
@@ -220,8 +233,8 @@ class SubwaySys:
             # 当前线路是否连接合法
             for index in range(len(test_line) - 1):
                 if (
-                    test_line[index] not in self.str2st
-                    or test_line[index + 1] not in self.str2st
+                        test_line[index] not in self.str2st
+                        or test_line[index + 1] not in self.str2st
                 ):
                     print("error")
                     return
@@ -232,10 +245,7 @@ class SubwaySys:
                 if test_line[index + 1] not in visited:
                     visited.append(test_line[index + 1])
 
-                st_i = self.str2st[test_line[index]]
-                st_j = self.str2st[test_line[index + 1]]
-
-                if st_i not in self.nexto[st_j]:
+                if not self.is_next(st_i_name=test_line[index], st_j_name=test_line[index + 1]):
                     print(
                         "error! 不合理的站点连接: "
                         + test_line[index]
