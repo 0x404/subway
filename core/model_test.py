@@ -1,7 +1,7 @@
 """pytest for core/model.py"""
 
-from model import *
-import utils
+from .model import *
+from . import utils
 
 
 def test_decorate_path():

@@ -34,3 +34,23 @@ def load_lines(data_path):
         else:
             station_list.append(Station(strs[0], True if strs[1] == "1" else False))
     return lines
+
+def split_by_space(inputs):
+    """
+    return a list of inputs separated by one or more spacebars
+    :param inputs: a str to processed, e.g. "x  y z  ww e"
+    :return: a list of inputs, e.g. [x, y, z, ww, e]
+    """
+    assert len(inputs) > 0
+    ans = []
+    now_str = ""
+    for index in range(len(inputs)):
+        if inputs[index] == " ":
+            if len(now_str) > 0:
+                ans.append(now_str)
+                now_str = ""
+        else:
+            now_str = now_str + inputs[index]
+    if len(now_str) > 0:
+        ans.append(now_str)
+    return ans
