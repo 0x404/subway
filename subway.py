@@ -33,11 +33,11 @@ def main():
         return
     while True:
         command = input()
-        command = command.strip().split(" ")
+        command = utils.split_by_space(command)
         if command[0] == "/b" and len(command) == 3:
             print_path(subway, command[1], command[2])
         else:
-            print("[error]: operation is supported!")
+            print("[error]: operation is not supported!")
             print("[usage]: subway.py /b <start_station_name> <end_station_name>")
 
 
