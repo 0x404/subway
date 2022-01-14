@@ -6,6 +6,7 @@ class Station:
     """
     station class
     """
+
     def __init__(self, st_name, is_trans=False):
         self.station_name = st_name
         self.trans = is_trans
@@ -82,9 +83,10 @@ class SubwaySys:
     """
     subwaySys class, consists of lines
     """
+
     def __init__(self, line_list=None):
-        self.str2st = {}    # station_name -> station
-        self.nexto = {}     # station_name -> edge
+        self.str2st = {}  # station_name -> station
+        self.nexto = {}  # station_name -> edge
         if line_list is not None:
             for line in line_list:
                 self.add_line(line)
@@ -104,7 +106,7 @@ class SubwaySys:
             if nxt_ed.station_to == st_j:
                 return nxt_ed.belong_to
         raise Exception(
-            "SubwaySys_get_edge_belongs: " + st_i + " " + st_j + " not connected."
+            "[error]: get_edge_belongs--" + st_i + " " + st_j + " not connected."
         )
 
     def is_next(self, st_i, st_j):
@@ -134,7 +136,7 @@ class SubwaySys:
         :param path: list of stations, e.g. [station1, station2, ..., station n]
         :return : list of [station, msg], e.g. [[station1, msg1], [station2, msg2], ...]
         """
-        assert len(path) >= 1
+        assert len(path) >= 1, "path to be decorated is empty."
 
         ans = [[path[0], None]]
         if len(path) == 1:
@@ -160,8 +162,10 @@ class SubwaySys:
         """
         dist, last_st = {}, {}
         if isinstance(start, str):
+            assert start in self.str2st, "station {} is not in subway system.".format(start)
             start = self.str2st[start]
         if isinstance(end, str):
+            assert end in self.str2st, "station {} is not in subway system.".format(end)
             end = self.str2st[end]
         for station in self.nexto:
             dist[station] = INF
@@ -214,9 +218,13 @@ class SubwaySys:
             self.nexto[st_j.name] = []
 
         if not self.is_next(st_i=st_j.name, st_j=st_i.name):
-            self.nexto[st_j.name].append(Edge(station_to=st_i.name, belong_to=edge_belong))
+            self.nexto[st_j.name].append(
+                Edge(station_to=st_i.name, belong_to=edge_belong)
+            )
         if not self.is_next(st_i=st_i.name, st_j=st_j.name):
-            self.nexto[st_i.name].append(Edge(station_to=st_j.name, belong_to=edge_belong))
+            self.nexto[st_i.name].append(
+                Edge(station_to=st_j.name, belong_to=edge_belong)
+            )
 
     def test_by_file(self, file_path):
         """
