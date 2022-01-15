@@ -1,6 +1,5 @@
 """pytest for core/utils.py"""
-from ctypes import util
-from . import utils
+from core import utils
 
 def test_split_by_space():
     """test for uitls.test_split_by_space"""
