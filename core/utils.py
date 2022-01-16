@@ -1,4 +1,5 @@
 """utils"""
+# pylint: disable=simplifiable-if-expression
 from .model import Station
 from .model import Line
 
@@ -35,6 +36,7 @@ def load_lines(data_path):
             station_list.append(Station(strs[0], True if strs[1] == "1" else False))
     return lines
 
+
 def split_by_space(inputs):
     """
     return a list of inputs separated by one or more spacebars
@@ -44,7 +46,8 @@ def split_by_space(inputs):
     assert len(inputs) > 0
     ans = []
     now_str = ""
-    for index in range(len(inputs)):
+    length = len(inputs)
+    for index in range(length):
         if inputs[index] == " ":
             if len(now_str) > 0:
                 ans.append(now_str)
