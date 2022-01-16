@@ -161,7 +161,9 @@ class SubwaySys:
         """
         dist, last_st = {}, {}
         if isinstance(start, str):
-            assert start in self.str2st, "station {} is not in subway system.".format(start)
+            assert start in self.str2st, "station {} is not in subway system.".format(
+                start
+            )
             start = self.str2st[start]
         if isinstance(end, str):
             assert end in self.str2st, "station {} is not in subway system.".format(end)
@@ -240,10 +242,10 @@ class SubwaySys:
 
             # 当前线路是否连接合法
             for index in range(len(test_line) - 1):
-                if (
-                        test_line[index] not in self.str2st
-                        or test_line[index + 1] not in self.str2st
-                ):
+                if test_line[index] not in self.str2st:
+                    print("error")
+                    return
+                if test_line[index + 1] not in self.str2st:
                     print("error")
                     return
 
