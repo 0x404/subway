@@ -1,11 +1,12 @@
+"""build"""
 import sys
 
-
+# pylint: disable=too-many-branches, consider-using-enumerate
 def generate_data(data_path, target_path):
     """
     :param data_path: 源数据路径
     :param target_path: 生成数据路径
-        源数据文件格式：
+        源数据文件格式:
 
             #路线名1    (#表示接下来为一条地铁线)
             站点名1 站点名2 ... 站点名n
@@ -14,7 +15,7 @@ def generate_data(data_path, target_path):
             ...
             #           (文件最后一定以#结尾)
 
-        生成数据文件格式：
+        生成数据文件格式:
 
             L 路线名1 1/0    # L 表示地铁线，1/0表示该地铁线是否为环形
             站点名1 1/0      # 1/0表示该站点是否为换乘站
