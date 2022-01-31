@@ -59,6 +59,9 @@ class Line:
         self.line_name = line_name
         self.st_list = st_list
         self.ring = is_ring
+        self.start = st_list[0].name
+        self.end = st_list[-1].name
+        self.length = len(st_list)
 
     @property
     def name(self):
@@ -87,6 +90,7 @@ class SubwaySys:
     def __init__(self, line_list=None):
         self.str2st = {}  # station_name -> station
         self.nexto = {}  # station_name -> edge
+        self.lines = []
         if line_list is not None:
             for line in line_list:
                 self.add_line(line)
@@ -125,6 +129,7 @@ class SubwaySys:
         add line to subway system
         :param line: a line object
         """
+        self.lines.append(line)
         for i in range(len(line.station_list) - 1):
             self._link(line.station_list[i], line.station_list[i + 1], line.name)
         if line.is_ring and len(line.station_list) > 1:
@@ -174,6 +179,25 @@ class SubwaySys:
         ans_path = solution.shortest_path(start, end, self.nexto)
         ans_path = list(map(lambda x: self.str2st[x], ans_path))
         return self._decorate_path(ans_path)
+
+    def travel_path_from(self, start):
+        """Calculate the travel path.
+
+        Calculate the path that travels all station.
+
+        Args:
+            start: str or station object, indicats the start station.
+
+        Return:
+            A list of station name indicates the path.
+        """
+        if isinstance(start, str):
+            assert start in self.str2st, "station {} is not in subway system".format(
+                start
+            )
+        else:
+            start = start.name
+        return solution.travel_path_from(start, self.nexto, self.lines)
 
     def _link(self, st_i, st_j, edge_belong):
         """

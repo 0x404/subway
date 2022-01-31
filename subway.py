@@ -17,6 +17,24 @@ def print_path(subway_sys, start, end):
         print(station.name, msg if msg is not None else "")
 
 
+def print_travel_path(subway_sys, start):
+    """Print travel path.
+
+    Print path that travel from start and pass all station.
+
+    Args:
+        subway_sys: subway system.
+        start: str, start station.
+
+    Return:
+        None
+    """
+    path = subway_sys.travel_path_from(start)
+    print("总站数: ", len(path))
+    for station in path:
+        print(station)
+
+
 def main():
     """
     subway system entry
@@ -27,6 +45,8 @@ def main():
     subway = SubwaySys(lines)
     if len(sys.argv) == 4 and sys.argv[1] == "/b":
         print_path(subway, sys.argv[2], sys.argv[3])
+    elif len(sys.argv) == 3 and sys.argv[1] == "/a":
+        print_travel_path(subway, sys.argv[2])
     elif len(sys.argv) != 1:
         print("[error]: operation is supported!")
         print("[usage]: subway.py /b <start_station_name> <end_station_name>")
@@ -36,6 +56,8 @@ def main():
         command = utils.split_by_space(command)
         if command[0] == "/b" and len(command) == 3:
             print_path(subway, command[1], command[2])
+        elif command[0] == "/a" and len * (command) == 2:
+            print_travel_path(subway, command[1])
         else:
             print("[error]: operation is not supported!")
             print("[usage]: subway.py /b <start_station_name> <end_station_name>")
