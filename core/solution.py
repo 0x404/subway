@@ -97,3 +97,21 @@ def travel_path_from(start, nexto, lines):
         cur_start = nex_start
         visited[traveled_line] = True
     return ans
+
+
+def verify_path(path):
+    """Verify path
+
+    Args:
+        path: station str list.
+
+    Return:
+        True: If the stations in the list do cover all stations of the whole subway at least once,
+              and the number of stations is correct, the traversal order of stations is reasonable.
+        False: The traversal order of stations is still reasonable, but there are missing stations
+               or the number of stations is wrong. If there are missing stations,
+               this program should output at least one missing station name.
+        Error: If the traversal order of the station is unreasonable
+    """
+    # Subwaysys.test_by_file should be refactored and moved here.
+    pass

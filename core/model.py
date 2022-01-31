@@ -157,42 +157,13 @@ class SubwaySys:
         if line.is_ring and len(line.station_list) > 1:
             self._link(line.station_list[0], line.station_list[-1], line.name)
 
-    def _decorate_path(self, path):
-        """Decorate path.
-
-        Decorate station name list into station with message.
-
-        Args:
-            path: station list, e.g. [station1, station2, station3]
-
-        Return:
-            list: [[station1, msg1], [station2, msg2], [station3, msg3]].
-            station: station instance.
-            msg: str or None.
-        """
-        assert len(path) >= 1, "path to be decorated is empty."
-        ans = [[path[0], None]]
-        if len(path) == 1:
-            return ans
-
-        now_line = self.get_edge_belongs(path[0], path[1])
-        for i in range(1, len(path) - 1):
-            nex_line = self.get_edge_belongs(path[i], path[i + 1])
-            if now_line != nex_line:
-                ans.append([path[i], "换乘" + nex_line])
-                now_line = nex_line
-            else:
-                ans.append([path[i], None])
-        ans.append([path[-1], None])
-        return ans
-
     def shortest_path(self, start, end):
         """Calculate shortest path form start to end.
 
         Args:
             start: str or station obejct, indicates start station
             end: str or station object, indicates end station
-        
+
         Return:
             a decorated shortest path,
             e.g.[[start, msg], [station, msg1], ..., [end, msg]]
@@ -262,6 +233,35 @@ class SubwaySys:
             self.nexto[st_i.name].append(
                 Edge(station_to=st_j.name, belong_to=edge_belong)
             )
+
+    def _decorate_path(self, path):
+        """Decorate path.
+
+        Decorate station name list into station with message.
+
+        Args:
+            path: station list, e.g. [station1, station2, station3]
+
+        Return:
+            list: [[station1, msg1], [station2, msg2], [station3, msg3]].
+            station: station instance.
+            msg: str or None.
+        """
+        assert len(path) >= 1, "path to be decorated is empty."
+        ans = [[path[0], None]]
+        if len(path) == 1:
+            return ans
+
+        now_line = self.get_edge_belongs(path[0], path[1])
+        for i in range(1, len(path) - 1):
+            nex_line = self.get_edge_belongs(path[i], path[i + 1])
+            if now_line != nex_line:
+                ans.append([path[i], "换乘" + nex_line])
+                now_line = nex_line
+            else:
+                ans.append([path[i], None])
+        ans.append([path[-1], None])
+        return ans
 
     def test_by_file(self, file_path):
         """
