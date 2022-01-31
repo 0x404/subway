@@ -1,5 +1,4 @@
 """model"""
-INF: int = 10000
 from core import solution
 
 
@@ -9,45 +8,43 @@ class Station:
     """
 
     def __init__(self, st_name, is_trans=False):
-        self.station_name = st_name
-        self.trans = is_trans
+        self._name = st_name
+        self._trans = is_trans
 
     @property
     def name(self):
         """get station's name"""
-        return self.station_name
+        return self._name
 
     @property
     def is_trans(self):
         """whther a station is a transfer station"""
-        return self.trans
+        return self._trans
 
     def __str__(self):
-        if self.trans:
-            return "station(%s, transfer_st)" % (self.station_name)
-        return "station(%s, normal_st)" % (self.station_name)
+        if self._trans:
+            return "station(%s, transfer_st)" % (self._name)
+        return "station(%s, normal_st)" % (self._name)
 
 
 class Edge:
     """
     line edge
-    :param st_j(str)        : Edge visited station
-    :param line_belongs(str): this edge belongs which line
     """
 
     def __init__(self, station_to, belong_to):
-        self.st_j = station_to
-        self.line_belongs = belong_to
+        self._station_to = station_to
+        self._belong_to = belong_to
 
     @property
     def station_to(self):
         """which station an edge link to"""
-        return self.st_j
+        return self._station_to
 
     @property
     def belong_to(self):
         """which line an edge belong to"""
-        return self.line_belongs
+        return self._belong_to
 
 
 class Line:
@@ -56,30 +53,44 @@ class Line:
     """
 
     def __init__(self, line_name, st_list, is_ring=False):
-        self.line_name = line_name
-        self.st_list = st_list
-        self.ring = is_ring
-        self.start = st_list[0].name
-        self.end = st_list[-1].name
-        self.length = len(st_list)
+        self._name = line_name
+        self._st_list = st_list
+        self._ring = is_ring
 
     @property
     def name(self):
         """a line's name"""
-        return self.line_name
+        return self._name
 
     @property
     def is_ring(self):
         """whether the line is a ring"""
-        return self.ring
+        return self._ring
 
     @property
     def station_list(self):
         """get station list of a line"""
-        return self.st_list
+        return self._st_list
+
+    @property
+    def start(self):
+        """name of the first station"""
+        assert len(self._st_list) > 0
+        return self._st_list[0].name
+
+    @property
+    def end(self):
+        """name of the last station"""
+        assert len(self._st_list) > 0
+        return self._st_list[-1].name
+
+    @property
+    def length(self):
+        """length of line"""
+        return len(self._st_list)
 
     def __str__(self):
-        return "地铁线: " + self.line_name
+        return "地铁线: " + self._name
 
 
 class SubwaySys:
@@ -96,28 +107,38 @@ class SubwaySys:
                 self.add_line(line)
 
     def get_edge_belongs(self, st_i, st_j):
-        """
-        :param st_i: station name one
-        :param st_j: station name two
-        :return: line_name
+        """Get edge belong.
+
+        Get the name of line that connect station i and station j.
+
+        Args:
+            st_i: str or station instance
+            st_j: str or station instance
+
+        Return:
+            the line name of edge(station i, station j)
         """
         if isinstance(st_i, Station):
             st_i = st_i.name
         if isinstance(st_j, Station):
             st_j = st_j.name
-
         for nxt_ed in self.nexto[st_i]:
             if nxt_ed.station_to == st_j:
                 return nxt_ed.belong_to
+
         raise Exception(
-            "[error]: get_edge_belongs--" + st_i + " " + st_j + " not connected."
+            "[error]: get_edge_belongs " + st_i + " " + st_j + " not connected."
         )
 
     def is_next(self, st_i, st_j):
-        """
-        :param   st_i: origin station (str)
-        :param   st_j: judged station (str)
-        :return: st_j whether next to st_i
+        """Whether station i is next to station j.
+
+        Args:
+            st_i: str, name of station.
+            st_j: str, name of station.
+
+        Return:
+            bool, true if station i is next to station j.
         """
         for nex_ed in self.nexto[st_i]:
             if nex_ed.station_to == st_j:
@@ -125,9 +146,10 @@ class SubwaySys:
         return False
 
     def add_line(self, line):
-        """
-        add line to subway system
-        :param line: a line object
+        """Add a line to subway system.
+
+        Args:
+            line: line object to be added.
         """
         self.lines.append(line)
         for i in range(len(line.station_list) - 1):
@@ -136,13 +158,19 @@ class SubwaySys:
             self._link(line.station_list[0], line.station_list[-1], line.name)
 
     def _decorate_path(self, path):
-        """
-        decorate station list generate from algs (e.g. shortest_path)
-        :param path: list of stations, e.g. [station1, station2, ..., station n]
-        :return : list of [station, msg], e.g. [[station1, msg1], [station2, msg2], ...]
+        """Decorate path.
+
+        Decorate station name list into station with message.
+
+        Args:
+            path: station list, e.g. [station1, station2, station3]
+
+        Return:
+            list: [[station1, msg1], [station2, msg2], [station3, msg3]].
+            station: station instance.
+            msg: str or None.
         """
         assert len(path) >= 1, "path to be decorated is empty."
-
         ans = [[path[0], None]]
         if len(path) == 1:
             return ans
@@ -159,11 +187,15 @@ class SubwaySys:
         return ans
 
     def shortest_path(self, start, end):
-        """
-        calculate the shortest path from star station to end station
-        :param start: start station object or the name of start station
-        :param end: end station object or the name of end station
-        :return : a list of station object presents the path from start to the end
+        """Calculate shortest path form start to end.
+
+        Args:
+            start: str or station obejct, indicates start station
+            end: str or station object, indicates end station
+        
+        Return:
+            a decorated shortest path,
+            e.g.[[start, msg], [station, msg1], ..., [end, msg]]
         """
         if isinstance(start, str):
             assert start in self.str2st, "station {} is not in subway system.".format(
@@ -200,10 +232,14 @@ class SubwaySys:
         return solution.travel_path_from(start, self.nexto, self.lines)
 
     def _link(self, st_i, st_j, edge_belong):
-        """
-        create an edge between station i and station j
-        :param st_i: a station object
-        :param st_j: a station object
+        """Link station i and station j in subway system.
+
+        Args:
+            st_i: station object
+            st_j: station object
+
+        Return:
+            None
         """
         if st_i.name not in self.str2st:
             self.str2st[st_i.name] = Station(st_i.name, st_i.is_trans)
