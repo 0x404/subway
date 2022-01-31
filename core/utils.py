@@ -26,9 +26,10 @@ def load_lines(data_path):
         strs = strs.strip("\n").strip()
         strs = strs.split(" ")
         if strs[0] == "L":
-            lines.append(
-                Line(line_name=line_name, st_list=station_list, is_ring=is_ring)
-            )
+            if len(station_list) > 0:
+                lines.append(
+                    Line(line_name=line_name, st_list=station_list, is_ring=is_ring)
+                )
             line_name = strs[1]
             station_list = []
             is_ring = True if strs[2] == "1" else False
