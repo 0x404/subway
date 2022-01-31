@@ -1,5 +1,6 @@
 """model"""
 INF: int = 10000
+from core import solution
 
 
 class Station:
@@ -159,43 +160,20 @@ class SubwaySys:
         :param end: end station object or the name of end station
         :return : a list of station object presents the path from start to the end
         """
-        dist, last_st = {}, {}
         if isinstance(start, str):
             assert start in self.str2st, "station {} is not in subway system.".format(
                 start
             )
-            start = self.str2st[start]
+        else:
+            start = start.name
         if isinstance(end, str):
             assert end in self.str2st, "station {} is not in subway system.".format(end)
-            end = self.str2st[end]
-        for station in self.nexto:
-            dist[station] = INF
-            last_st[station] = station
+        else:
+            end = end.name
 
-        # str as key
-        queue = [start.name]
-        head, tail = 0, 0
-        dist[start.name] = 0
-        while head <= tail:
-            now_st = queue[head]
-            head += 1
-            for nex_ed in self.nexto[now_st]:
-                nex_st = nex_ed.station_to
-                if dist[nex_st] > dist[now_st] + 1:
-                    if dist[nex_st] == INF:
-                        tail += 1
-                        queue.append(nex_st)
-                    dist[nex_st] = dist[now_st] + 1
-                    last_st[nex_st] = now_st
-
-        path = []
-        now_st = end.name
-        while last_st[now_st] != now_st:
-            path.append(self.str2st[now_st])
-            now_st = last_st[now_st]
-        path.append(self.str2st[now_st])
-        path.reverse()
-        return self._decorate_path(path)
+        ans_path = solution.shortest_path(start, end, self.nexto)
+        ans_path = list(map(lambda x: self.str2st[x], ans_path))
+        return self._decorate_path(ans_path)
 
     def _link(self, st_i, st_j, edge_belong):
         """
