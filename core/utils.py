@@ -44,7 +44,6 @@ def split_by_space(inputs):
     :param inputs: a str to processed, e.g. "x  y z  ww e"
     :return: a list of inputs, e.g. [x, y, z, ww, e]
     """
-    assert len(inputs) > 0
     ans = []
     now_str = ""
     length = len(inputs)

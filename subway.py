@@ -53,10 +53,12 @@ def main():
         return
     while True:
         command = input()
+        if len(command) <= 0:
+            continue
         command = utils.split_by_space(command)
         if command[0] == "/b" and len(command) == 3:
             print_path(subway, command[1], command[2])
-        elif command[0] == "/a" and len * (command) == 2:
+        elif command[0] == "/a" and len(command) == 2:
             print_travel_path(subway, command[1])
         else:
             print("[error]: operation is not supported!")
