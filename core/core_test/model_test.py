@@ -74,3 +74,51 @@ def test_shortest_path():
     test_output3 = [st.name for st, _ in test_output3]
     test_ans3 = ["北京西站", "六里桥东", "六里桥", "西局"]
     assert test_output3 == test_ans3
+
+
+def test_travel_path_from():
+    test1_line1 = Line(
+        "A",
+        [Station("a_1"), Station("a_2"), Station("a_3"), Station("a_4")],
+        is_ring=True,
+    )
+    test1_line2 = Line("B", [Station("b_1"), Station("a_1"), Station("b_2")])
+    test1_line3 = Line("C", [Station("a_2"), Station("b_1"), Station("c_1")])
+    subway = SubwaySys([test1_line1, test1_line2, test1_line3])
+
+    test1_pred1 = subway.travel_path_from("a_1")
+    test1_ans1 = [
+        "a_1",
+        "a_2",
+        "a_3",
+        "a_4",
+        "a_1",
+        "b_1",
+        "a_1",
+        "b_2",
+        "a_1",
+        "a_2",
+        "b_1",
+        "c_1",
+    ]
+    assert test1_pred1 == test1_ans1
+
+    test1_pred2 = subway.travel_path_from("b_1")
+    test1_ans2 = [
+        "b_1",
+        "a_1",
+        "b_2",
+        "a_1",
+        "a_2",
+        "a_3",
+        "a_4",
+        "a_3",
+        "a_2",
+        "b_1",
+        "c_1",
+    ]
+    assert test1_pred2 == test1_ans2
+
+    test1_pred3 = subway.travel_path_from("a_2")
+    test1_ans3 = ["a_2", "b_1", "c_1", "b_1", "a_1", "b_2", "a_1", "a_2", "a_3", "a_4"]
+    assert test1_pred3 == test1_ans3
