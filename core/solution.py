@@ -1,6 +1,82 @@
 """solution"""
-
 INF: int = 10000
+
+
+def get_line_belong(st_i, st_j, nexto):
+    """Get line belong.
+
+    Get the name of line that connect station i and station j.
+
+    Args:
+        st_i: str, station name.
+        st_j: str, station name.
+        nexto: map, adjacency table of subway system.
+
+    Return:
+        the line name of edge(station i, station j).
+    """
+    assert st_i in nexto, "station don't exist."
+    assert st_j in nexto, "station don't exist."
+
+    for edge in nexto[st_j]:
+        if edge.station_to == st_i:
+            return edge.belong_to
+    for edge in nexto[st_i]:
+        if edge.station_to == st_j:
+            return edge.belong_to
+    raise Exception("{} and {} are not adjacent.".format(st_i, st_j))
+
+
+def is_nexto(st_i, st_j, nexto):
+    """Whther station i is next to station j.
+
+    Args:
+        st_i: str, station name.
+        st_j: str, station name.
+        nexto: map, adjacency table of subway system.
+
+    Return:
+        True: if station i is next to station j.
+        False: ohterwise.
+    """
+    assert st_i in nexto, "station don't exist."
+    assert st_j in nexto, "station don't exist."
+
+    for edge in nexto[st_j]:
+        if edge.station_to == st_i:
+            return True
+    return False
+
+
+def docorate_path(path, nexto):
+    """Decorate path.
+
+    Decorate station list into station with message.
+
+    Args:
+        path: station list, e.g. [station1, station2, station3]
+        nexto: map, adjacency table of subway system.
+
+    Return:
+        list: [[station1, msg1], [station2, msg2], [station3, msg3]].
+        station: station instance.
+        msg: str or None.
+    """
+    assert len(path) >= 1, "path to be decorated is empty."
+    ans = [[path[0], None]]
+    if len(path) == 1:
+        return ans
+
+    now_line = get_line_belong(path[0].name, path[1].name, nexto)
+    for i in range(1, len(path) - 1):
+        nex_line = get_line_belong(path[i].name, path[i + 1].name, nexto)
+        if now_line != nex_line:
+            ans.append([path[i], "换乘" + nex_line])
+            now_line = nex_line
+        else:
+            ans.append([path[i], None])
+    ans.append([path[-1], None])
+    return ans
 
 
 def shortest_path(start, end, nexto):

@@ -1,6 +1,57 @@
 """pytest for solution"""
+from tkinter import N
 from core.model import *
+from core import utils
 from core import solution
+
+
+def test_decorate_path():
+    lines = utils.load_lines("data/beijing-subway.txt")
+    subway = SubwaySys(lines)
+    test_input1 = [
+        Station("大葆台", False),
+        Station("郭公庄", True),
+        Station("丰台科技园", False),
+        Station("科怡路", False),
+    ]
+    test_ans1 = [["大葆台", None], ["郭公庄", "换乘9号线"], ["丰台科技园", None], ["科怡路", None]]
+    tmp_output1 = solution.docorate_path(test_input1, subway.nexto)
+    test_output1 = []
+    for st in tmp_output1:
+        test_output1.append([st[0].name, st[1]])
+
+    assert test_output1 == test_ans1
+
+    test_input2 = [Station("宣武门", True), Station("西单", True), Station("复兴门", True)]
+    test_ans2 = [["宣武门", None], ["西单", "换乘1号线"], ["复兴门", None]]
+    tmp_output2 = solution.docorate_path(test_input2, subway.nexto)
+    test_output2 = []
+    for st in tmp_output2:
+        test_output2.append([st[0].name, st[1]])
+
+    assert test_output2 == test_ans2
+
+
+def test_get_edge_belongs():
+    lines = utils.load_lines("data/beijing-subway.txt")
+    subway = SubwaySys(lines)
+
+    assert solution.get_line_belong("宣武门", "西单", subway.nexto) == "4号线"
+    assert solution.get_line_belong("白石桥南", "国家图书馆", subway.nexto) == "9号线"
+    assert solution.get_line_belong("和平西桥", "和平里北街", subway.nexto) == "5号线"
+    assert solution.get_line_belong("郭公庄", "大葆台", subway.nexto) == "房山线"
+
+
+def test_is_next():
+    lines = utils.load_lines("data/beijing-subway.txt")
+    subway = SubwaySys(lines)
+
+    assert solution.is_nexto("郭公庄", "稻田", subway.nexto) == False
+    assert solution.is_nexto("北海北", "什刹海", subway.nexto) == False
+    assert solution.is_nexto("东单", "王府井", subway.nexto) == True
+    assert solution.is_nexto("七里庄", "西局", subway.nexto) == True
+    assert solution.is_nexto("七里庄", "六里桥", subway.nexto) == True
+    assert solution.is_nexto("七里庄", "泥洼", subway.nexto) == False
 
 
 def test_travel_path_from():

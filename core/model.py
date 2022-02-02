@@ -106,45 +106,6 @@ class SubwaySys:
             for line in line_list:
                 self.add_line(line)
 
-    def get_edge_belongs(self, st_i, st_j):
-        """Get edge belong.
-
-        Get the name of line that connect station i and station j.
-
-        Args:
-            st_i: str or station instance
-            st_j: str or station instance
-
-        Return:
-            the line name of edge(station i, station j)
-        """
-        if isinstance(st_i, Station):
-            st_i = st_i.name
-        if isinstance(st_j, Station):
-            st_j = st_j.name
-        for nxt_ed in self.nexto[st_i]:
-            if nxt_ed.station_to == st_j:
-                return nxt_ed.belong_to
-
-        raise Exception(
-            "[error]: get_edge_belongs " + st_i + " " + st_j + " not connected."
-        )
-
-    def is_next(self, st_i, st_j):
-        """Whether station i is next to station j.
-
-        Args:
-            st_i: str, name of station.
-            st_j: str, name of station.
-
-        Return:
-            bool, true if station i is next to station j.
-        """
-        for nex_ed in self.nexto[st_i]:
-            if nex_ed.station_to == st_j:
-                return True
-        return False
-
     def add_line(self, line):
         """Add a line to subway system.
 
@@ -181,7 +142,7 @@ class SubwaySys:
 
         ans_path = solution.shortest_path(start, end, self.nexto)
         ans_path = list(map(lambda x: self.str2st[x], ans_path))
-        return self._decorate_path(ans_path)
+        return solution.docorate_path(ans_path, self.nexto)
 
     def travel_path_from(self, start):
         """Calculate the travel path.
@@ -202,106 +163,33 @@ class SubwaySys:
             start = start.name
         return solution.travel_path_from(start, self.nexto, self.lines)
 
-    def _link(self, st_i, st_j, edge_belong):
+    def _link(self, st_i, st_j, edge_belong, directed=False):
         """Link station i and station j in subway system.
 
         Args:
-            st_i: station object
-            st_j: station object
+            st_i: station object.
+            st_j: station object.
+            edge_belong: str, line name of Edge(station i, station j).
+            directed: bool, indicates whether it is directed.
 
         Return:
-            None
+            None.
         """
         if st_i.name not in self.str2st:
             self.str2st[st_i.name] = Station(st_i.name, st_i.is_trans)
         if st_j.name not in self.str2st:
             self.str2st[st_j.name] = Station(st_j.name, st_j.is_trans)
 
-        st_i = self.str2st[st_i.name]
-        st_j = self.str2st[st_j.name]
+        st_i = st_i.name
+        st_j = st_j.name
 
-        if st_i.name not in self.nexto:
-            self.nexto[st_i.name] = []
-        if st_j.name not in self.nexto:
-            self.nexto[st_j.name] = []
+        if st_i not in self.nexto:
+            self.nexto[st_i] = []
+        if st_j not in self.nexto:
+            self.nexto[st_j] = []
 
-        if not self.is_next(st_i=st_j.name, st_j=st_i.name):
-            self.nexto[st_j.name].append(
-                Edge(station_to=st_i.name, belong_to=edge_belong)
-            )
-        if not self.is_next(st_i=st_i.name, st_j=st_j.name):
-            self.nexto[st_i.name].append(
-                Edge(station_to=st_j.name, belong_to=edge_belong)
-            )
+        if not solution.is_nexto(st_j, st_i, self.nexto):
+            self.nexto[st_i].append(Edge(st_j, edge_belong))
 
-    def _decorate_path(self, path):
-        """Decorate path.
-
-        Decorate station name list into station with message.
-
-        Args:
-            path: station list, e.g. [station1, station2, station3]
-
-        Return:
-            list: [[station1, msg1], [station2, msg2], [station3, msg3]].
-            station: station instance.
-            msg: str or None.
-        """
-        assert len(path) >= 1, "path to be decorated is empty."
-        ans = [[path[0], None]]
-        if len(path) == 1:
-            return ans
-
-        now_line = self.get_edge_belongs(path[0], path[1])
-        for i in range(1, len(path) - 1):
-            nex_line = self.get_edge_belongs(path[i], path[i + 1])
-            if now_line != nex_line:
-                ans.append([path[i], "换乘" + nex_line])
-                now_line = nex_line
-            else:
-                ans.append([path[i], None])
-        ans.append([path[-1], None])
-        return ans
-
-    def test_by_file(self, file_path):
-        """
-        test all subways by file of path
-        :param file_path: path of test file
-        """
-        visited = []
-        file = open(file_path, mode="r", encoding="utf-8")
-
-        while True:
-            test_line = file.readline()
-            if not test_line:
-                break
-            test_line = test_line.strip("\n").strip()
-            test_line = test_line.split(" ")
-
-            # 当前线路是否连接合法
-            for index in range(len(test_line) - 1):
-                if test_line[index] not in self.str2st:
-                    print("error")
-                    return
-                if test_line[index + 1] not in self.str2st:
-                    print("error")
-                    return
-
-                # 已访问的站点
-                if test_line[index] not in visited:
-                    visited.append(test_line[index])
-                if test_line[index + 1] not in visited:
-                    visited.append(test_line[index + 1])
-
-                if not self.is_next(st_i=test_line[index], st_j=test_line[index + 1]):
-                    print(
-                        "error! 不合理的站点连接: "
-                        + test_line[index]
-                        + " "
-                        + test_line[index + 1]
-                    )
-                    return
-
-        for name in self.str2st:
-            if str(name) not in visited:
-                print("false! 未访问的站点: " + str(name))
+        if not directed and not solution.is_nexto(st_i, st_j, self.nexto):
+            self.nexto[st_j].append(Edge(st_i, edge_belong))
