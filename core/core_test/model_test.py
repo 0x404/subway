@@ -4,6 +4,38 @@ from core.model import *
 from core import utils
 
 
+def test_add_line():
+    test1_line1 = Line(
+        "A",
+        [Station("a_1"), Station("a_2"), Station("a_3"), Station("a_4")],
+        is_ring=True,
+    )
+    test1_line2 = Line("B", [Station("b_1"), Station("a_1"), Station("b_2")])
+    test1_line3 = Line("C", [Station("a_2"), Station("b_1"), Station("c_1")])
+    subway = SubwaySys([test1_line1, test1_line2, test1_line3])
+    assert len(subway.nexto) == 7 and len(subway.lines) == 3
+    assert sorted([edge.station_to for edge in subway.nexto["a_1"]]) == [
+        "a_2",
+        "a_4",
+        "b_1",
+        "b_2",
+    ]
+    assert sorted([edge.station_to for edge in subway.nexto["a_2"]]) == [
+        "a_1",
+        "a_3",
+        "b_1",
+    ]
+    assert sorted([edge.station_to for edge in subway.nexto["b_1"]]) == [
+        "a_1",
+        "a_2",
+        "c_1",
+    ]
+    assert sorted([edge.station_to for edge in subway.nexto["a_3"]]) == ["a_2", "a_4"]
+    assert sorted([edge.station_to for edge in subway.nexto["a_4"]]) == ["a_1", "a_3"]
+    assert sorted([edge.station_to for edge in subway.nexto["b_2"]]) == ["a_1"]
+    assert sorted([edge.station_to for edge in subway.nexto["c_1"]]) == ["b_1"]
+
+
 def test_shortest_path():
     lines = utils.load_lines("data/beijing-subway.txt")
     subway = SubwaySys(lines)
