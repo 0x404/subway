@@ -27,12 +27,29 @@ def print_travel_path(subway_sys, start):
         start: str, start station.
 
     Return:
-        None
+        None.
     """
     path = subway_sys.travel_path_from(start)
     print("总站数: ", len(path))
     for station in path:
         print(station)
+
+
+def test_by_file(subway_sys, file_path):
+    """Test by file.
+
+    Args:
+        subway_sys: subway system.
+        file_path: path of test file.
+
+    Return:
+        None.
+    """
+    path = utils.load_test_file(file_path)
+    res = subway_sys.test_by_file(path)
+    print(res["stats"])
+    if res["stats"] == "false":
+        print("遗漏车站:", res["miss_st"])
 
 
 def main():
@@ -47,6 +64,8 @@ def main():
         print_path(subway, sys.argv[2], sys.argv[3])
     elif len(sys.argv) == 3 and sys.argv[1] == "/a":
         print_travel_path(subway, sys.argv[2])
+    elif len(sys.argv) == 3 and sys.argv[1] == "/z":
+        test_by_file(subway, sys.argv[2])
     elif len(sys.argv) != 1:
         print("[error]: operation is supported!")
         print("[usage]: subway.py /b <start_station_name> <end_station_name>")
@@ -60,6 +79,8 @@ def main():
             print_path(subway, command[1], command[2])
         elif command[0] == "/a" and len(command) == 2:
             print_travel_path(subway, command[1])
+        elif command[0] == "/z" and len(command) == 2:
+            test_by_file(subway, command[1])
         else:
             print("[error]: operation is not supported!")
             print("[usage]: subway.py /b <start_station_name> <end_station_name>")

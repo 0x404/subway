@@ -118,6 +118,37 @@ class SubwaySys:
         if line.is_ring and len(line.station_list) > 1:
             self._link(line.station_list[0], line.station_list[-1], line.name)
 
+    def _link(self, st_i, st_j, edge_belong, directed=False):
+        """Link station i and station j in subway system.
+
+        Args:
+            st_i: station object.
+            st_j: station object.
+            edge_belong: str, line name of Edge(station i, station j).
+            directed: bool, indicates whether it is directed.
+
+        Return:
+            None.
+        """
+        if st_i.name not in self.str2st:
+            self.str2st[st_i.name] = Station(st_i.name, st_i.is_trans)
+        if st_j.name not in self.str2st:
+            self.str2st[st_j.name] = Station(st_j.name, st_j.is_trans)
+
+        st_i = st_i.name
+        st_j = st_j.name
+
+        if st_i not in self.nexto:
+            self.nexto[st_i] = []
+        if st_j not in self.nexto:
+            self.nexto[st_j] = []
+
+        if not solution.is_nexto(st_j, st_i, self.nexto):
+            self.nexto[st_i].append(Edge(st_j, edge_belong))
+
+        if not directed and not solution.is_nexto(st_i, st_j, self.nexto):
+            self.nexto[st_j].append(Edge(st_i, edge_belong))
+
     def shortest_path(self, start, end):
         """Calculate shortest path form start to end.
 
@@ -163,33 +194,21 @@ class SubwaySys:
             start = start.name
         return solution.travel_path_from(start, self.nexto, self.lines)
 
-    def _link(self, st_i, st_j, edge_belong, directed=False):
-        """Link station i and station j in subway system.
+    def test_by_file(self, path):
+        """Test by test file.
 
         Args:
-            st_i: station object.
-            st_j: station object.
-            edge_belong: str, line name of Edge(station i, station j).
-            directed: bool, indicates whether it is directed.
+            path: list of strs, indicates station name.
 
         Return:
-            None.
+            {"stats" : ("true", "false", "error"), "miss_st" : None}.
+            "true": If the stations in the list do cover all stations of the whole subway
+                at least once, and the number of stations is correct,
+                the traversal order of stations is reasonable.
+            "false": The traversal order of stations is still reasonable,
+                but there are missing stations or the number of stations is wrong.
+                If there are missing stations, this program should output
+                at least one missing station name.
+            "error": If the traversal order of the station is unreasonable.
         """
-        if st_i.name not in self.str2st:
-            self.str2st[st_i.name] = Station(st_i.name, st_i.is_trans)
-        if st_j.name not in self.str2st:
-            self.str2st[st_j.name] = Station(st_j.name, st_j.is_trans)
-
-        st_i = st_i.name
-        st_j = st_j.name
-
-        if st_i not in self.nexto:
-            self.nexto[st_i] = []
-        if st_j not in self.nexto:
-            self.nexto[st_j] = []
-
-        if not solution.is_nexto(st_j, st_i, self.nexto):
-            self.nexto[st_i].append(Edge(st_j, edge_belong))
-
-        if not directed and not solution.is_nexto(st_i, st_j, self.nexto):
-            self.nexto[st_j].append(Edge(st_i, edge_belong))
+        return solution.verify_path(path, self.nexto)
