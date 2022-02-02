@@ -1,4 +1,5 @@
 """solution"""
+
 INF: int = 10000
 
 
@@ -175,19 +176,44 @@ def travel_path_from(start, nexto, lines):
     return ans
 
 
-def verify_path(path):
+def verify_path(path, nexto):
     """Verify path
 
     Args:
         path: station str list.
+        nexto: map, adjacency table of subway system.
 
     Return:
-        True: If the stations in the list do cover all stations of the whole subway at least once,
+        {"stats" : ("true", "false", "error"), "miss_st" : None}.
+        "true": If the stations in the list do cover all stations of the whole subway at least once,
               and the number of stations is correct, the traversal order of stations is reasonable.
-        False: The traversal order of stations is still reasonable, but there are missing stations
-               or the number of stations is wrong. If there are missing stations,
-               this program should output at least one missing station name.
-        Error: If the traversal order of the station is unreasonable
+        "false", [st1, st2, ...]: The traversal order of stations is still reasonable,
+               but there are missing stations or the number of stations is wrong.
+               If there are missing stations, this program should output
+               at least one missing station name.
+        "error": If the traversal order of the station is unreasonable.
     """
-    # Subwaysys.test_by_file should be refactored and moved here.
-    pass
+    visited = []
+    ret = {"stats": "true", "miss_st": None}
+    for i, st_now in enumerate(path):
+        if i == len(path) - 1:
+            break
+        st_nex = path[i + 1]
+        if not is_nexto(st_nex, st_now, nexto):
+            ret["stats"] = "error"
+            return ret
+
+        if st_now not in visited:
+            visited.append(st_now)
+        if st_nex not in visited:
+            visited.append(st_nex)
+
+    if len(visited) != len(nexto):
+        miss_st = []
+        for station in nexto:
+            if station not in visited:
+                miss_st.append(station)
+        ret["stats"] = "false"
+        ret["miss_st"] = miss_st
+        return ret
+    return ret
