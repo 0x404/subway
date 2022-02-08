@@ -70,7 +70,7 @@
 
 <div class="main-window">
     <div class="left">
-        <canvas id="myCanvas" width="1200px" height="695px"
+        <canvas id="myCanvas" width="1200px" height="792px"
         style="border:0px solid #000000;">
         </canvas>
     </div>
@@ -79,7 +79,7 @@
         var ctx=c.getContext("2d");
         const img2 = document.createElement('img');
         // 设置src值
-        img2.src = "http://image-hosting-404.oss-cn-beijing.aliyuncs.com/img/SubwayMap.jpg"
+        img2.src = "http://image-hosting-404.oss-cn-beijing.aliyuncs.com/img/line.png"
         //设置canvas属性
         img2.onload = function () {
             {#c.width = img2.width;#}
@@ -136,7 +136,7 @@
                  * x，y均为比例x为距离左边占比例，y为距离上面占比例
                  */
                 let TRUE_WIDTH = 1200;
-                let TRUE_HEIGHT = 698;
+                let TRUE_HEIGHT = 792;
                 x = x * TRUE_WIDTH;
                 y = y * TRUE_HEIGHT;
                 var canvas = document.getElementById('myCanvas');
@@ -145,9 +145,9 @@
                 //加入beginPath()，防止移动画笔的过程的过程之中进行了绘图
                 ctx.beginPath();
                 ctx.arc(x, y, 6, 0, 2*Math.PI);
-                ctx.fillStyle="rgba(51,255,255,0.7)";
+                ctx.fillStyle="rgba(0,0,0,1)";
                 ctx.fill();
-                ctx.strokeStyle="rgba(51,255,255,1)";
+                ctx.strokeStyle="rgba(0,0,0,1)";
                 ctx.stroke();
             }
 

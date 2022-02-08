@@ -22,8 +22,8 @@ def get_shortest(req):
     print(end_stop)
 
     data = {}
-    data["xpath"] = [0.1, 0.2, 0.3]
-    data["ypath"] = [0.2, 0.4, 0.6]
+    data["xpath"] = [0.1, 0.2, 0.3, 0.1833]
+    data["ypath"] = [0.2, 0.4, 0.6, 0.515]
     res["data"] = data
     res = json.dumps(res)
     return HttpResponse(res)
