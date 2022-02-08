@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>北京地铁线路查询系统</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+
+        .syscolor {
+            background-color: rgba(95,158,160,0.7);
+            color: white;
+        }
+        header {
+            height: 6vh;
+            width: 100%;
+            background-color: rgb(95,158,160);
+        }
+        .logo {
+            color: white;
+            font-size: 3.2vh;
+            {#margin-left: 10vw;#}
+            height: 100%;
+            line-height: 6vh;
+            text-align: center;
+        }
+        .main-window {
+            display: flex;
+            justify-content: space-between;
+        }
+        .right {
+            width: calc(100vw - 720px);
+            border-left: 1px solid cadetblue ;
+            height: calc(100vh - 60px);
+            padding-left: 0.5vw;
+            padding-right: 0.5vw;
+        }
+
+        .rt {
+            margin-top: 2vh;
+            margin-bottom: 20vh;
+        }
+
+        .myhead {
+            font-size: 20px;
+            color: cadetblue;
+        }
+
+        .my-btn {
+            text-align: right;
+        }
+
+        .msg {
+            margin-right: 5px;
+            visibility: hidden;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div class="logo">
+        北京地铁线路查询系统
+    </div>
+</header>
+
+<div class="main-window">
+    <div class="left">
+        <canvas id="myCanvas" width="1200px" height="695px"
+        style="border:0px solid #000000;">
+        </canvas>
+    </div>
+    <script>
+        var c=document.getElementById("myCanvas");
+        var ctx=c.getContext("2d");
+        const img2 = document.createElement('img');
+        // 设置src值
+        img2.src = "http://image-hosting-404.oss-cn-beijing.aliyuncs.com/img/SubwayMap.jpg"
+        //设置canvas属性
+        img2.onload = function () {
+            {#c.width = img2.width;#}
+            {#c.height = img2.height;#}
+            {#c.style.backgroundSize = `${img2.width}px ${img2.height}px`;#}
+            c.style.backgroundSize = `1200px `;
+            c.style.backgroundImage = 'url("' + img2.src + '")';
+        }
+
+    </script>
+
+
+    <div class="right">
+        <div class="rt">
+            <form>
+              <div class="form-group">
+                <label for="start_stop">出发站点</label>
+                <input type="text" class="form-control" id="start_stop" placeholder="请输入起始站名...">
+              </div>
+              <div class="form-group">
+                <label for="end_stop">目标站点</label>
+                <input type="text" class="form-control" id="end_stop" placeholder="请输入终点站名...">
+              </div>
+                <div class="my-btn">
+                    <span class="msg">查询成功！</span>
+                    <button type="button" id="query_shortest" class="btn btn-default syscolor">查询两站之间最短路线</button>
+                </div>
+            </form>
+        </div>
+        <hr>
+        <div>
+            <form>
+              <div class="form-group">
+                <label for="start_stop2">出发站点</label>
+                <input type="text" class="form-control" id="start_stop2" placeholder="请输入起始站名...">
+              </div>
+                <div class="my-btn">
+                    <span class="msg">查询成功！</span>
+                    <button type="button" id="get_all" class="btn btn-default syscolor">遍历所有站点</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- jQuery-->
+        <script src="http://image-hosting-404.oss-cn-beijing.aliyuncs.com/js/jquery.min.js"></script>
+        <script>
+
+            //宽度1200， 高度695
+            function paint_point(x, y){
+                /**
+                 * x，y均为比例x为距离左边占比例，y为距离上面占比例
+                 */
+                let TRUE_WIDTH = 1200;
+                let TRUE_HEIGHT = 698;
+                x = x * TRUE_WIDTH;
+                y = y * TRUE_HEIGHT;
+                var canvas = document.getElementById('myCanvas');
+                var ctx = canvas.getContext('2d');
+                //从x, y的位置为圆心，6为半径，画一个从0-2π的圆
+                //加入beginPath()，防止移动画笔的过程的过程之中进行了绘图
+                ctx.beginPath();
+                ctx.arc(x, y, 6, 0, 2*Math.PI);
+                ctx.fillStyle="rgba(51,255,255,0.7)";
+                ctx.fill();
+                ctx.strokeStyle="rgba(51,255,255,1)";
+                ctx.stroke();
+            }
+
+            {#paint_point(1200 * 837 / 1500, 695 * 702 / 871);#}
+
+            $('#top_cancel').click(function () {
+                $('#start_stop').val('');
+                $('#end_stop').val('');
+            })
+
+            //获取两个站之间最短路径
+            $("#query_shortest").click(function () {
+                let start_stop = $("#start_stop").val();
+                let end_stop = $("#end_stop").val();
+                let postData = {};
+                postData["start_stop"] = start_stop;
+                postData["end_stop"] = end_stop;
+
+                $.ajax({
+                    url:'/getshortest/',
+                    type:'POST',
+                    data:postData,
+                    success:function (arg) {
+                        var resp = JSON.parse(arg);
+                        if(resp.code === 200){
+                            xpath = resp.data["xpath"];
+                            ypath = resp.data["ypath"];
+                            let len = xpath.length;
+                            let i = 0;
+                            var timer = setInterval(function () {
+                                paint_point(xpath[i], ypath[i]);
+                                i++;
+                                if(i >= len){
+                                    clearInterval(timer);
+                                }
+                            }, 500);
+                        }else if(resp.code === 201){
+                            window.alert(resp.msg)
+                        }
+                    },
+
+                })
+            })
+
+            //获取从某个站点出发可到达的所有站
+            $("#calcel2").click(function () {
+                $('#start_stop2').val('');
+            });
+            $("#get_all").click(function () {
+                let start_stop = $("#start_stop2").val();
+                let postData = {
+                    "start_stop" : start_stop
+                }
+                $.ajax({
+                    url: '/getall/',
+                    data: postData,
+                    type: 'POST',
+                    success: function (arg) {
+                        var resp = JSON.parse(arg);
+                        if(resp.code === 200){
+                            xpath = resp.data["xpath"];
+                            ypath = resp.data["ypath"];
+                            let len = xpath.length;
+                            let i = 0;
+                            var timer = setInterval(function () {
+                                paint_point(xpath[i], ypath[i]);
+                                i++;
+                                if(i >= len){
+                                    clearInterval(timer);
+                                }
+                            }, 500);
+                        }else if(resp.code === 201){
+                            window.alert(resp.msg)
+                        }
+                    },
+                    error: function () {
+
+                    }
+                })
+            })
+
+        </script>
+    </div>
+</div>
+</body>
+</html>
+
