@@ -1,8 +1,31 @@
 """subway"""
+from re import S
 import sys
 from core import utils
 from core.model import SubwaySys
 
+
+def query_shortes_path(start, end):
+    lines = utils.load_lines("data/beijing-subway.txt")
+    station_pos = utils.load_station_pos("data/beijing-subway-pos.txt")
+    subway = SubwaySys(lines)
+    path = subway.shortest_path(start, end)
+    ansx, ansy = [], []
+    for station, _ in path:
+        ansx.append(station_pos[station.name][0])
+        ansy.append(station_pos[station.name][1])
+    return ansx, ansy
+
+def query_travel_path(start):
+    lines = utils.load_lines("data/beijing-subway.txt")
+    station_pos = utils.load_station_pos("data/beijing-subway-pos.txt")
+    subway = SubwaySys(lines)
+    path = subway.travel_path_from(start)
+    ansx, ansy = [], []
+    for station in path:
+        ansx.append(station_pos[station][0])
+        ansy.append(station_pos[station][1])
+    return ansx, ansy
 
 def print_path(subway_sys, start, end):
     """
