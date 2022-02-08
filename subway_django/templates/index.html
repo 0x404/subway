@@ -126,6 +126,9 @@
         <!-- jQuery-->
         <script src="http://image-hosting-404.oss-cn-beijing.aliyuncs.com/js/jquery.min.js"></script>
         <script>
+                $.ajaxSetup({
+                     data:{csrfmiddlewaretoken:'{{ csrf_token }}'}
+                })
 
             //宽度1200， 高度695
             function paint_point(x, y){
