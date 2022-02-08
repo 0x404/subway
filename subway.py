@@ -1,13 +1,13 @@
 """subway"""
 from re import S
 import sys
-from .core import utils
-from .core.model import SubwaySys
+from core import utils
+from core.model import SubwaySys
 
 
 def query_shortes_path(start, end):
-    lines = utils.load_lines("/home/subway/subway_django/subway_django/subway/data/beijing-subway.txt")
-    station_pos = utils.load_station_pos("/home/subway/subway_django/subway_django/subway/data/beijing-subway-pos.txt")
+    lines = utils.load_lines("data/beijing-subway.txt")
+    station_pos = utils.load_station_pos("data/beijing-subway-pos.txt")
     subway = SubwaySys(lines)
     path = subway.shortest_path(start, end)
     ansx, ansy = [], []
@@ -17,8 +17,8 @@ def query_shortes_path(start, end):
     return ansx, ansy
 
 def query_travel_path(start):
-    lines = utils.load_lines("/home/subway/subway_django/subway_django/subway/data/beijing-subway.txt")
-    station_pos = utils.load_station_pos("/home/subway/subway_django/subway_django/subway/data/beijing-subway-pos.txt")
+    lines = utils.load_lines("data/beijing-subway.txt")
+    station_pos = utils.load_station_pos("data/beijing-subway-pos.txt")
     subway = SubwaySys(lines)
     path = subway.travel_path_from(start)
     ansx, ansy = [], []
