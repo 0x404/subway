@@ -1,5 +1,5 @@
 """model"""
-from core import solution
+from . import solution
 
 
 class Station:
