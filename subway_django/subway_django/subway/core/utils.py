@@ -1,7 +1,7 @@
 """utils"""
 # pylint: disable=simplifiable-if-expression
-from core.model import Station
-from core.model import Line
+from .model import Station
+from .model import Line
 
 
 def load_lines(data_path):
