@@ -42,6 +42,7 @@ def load_lines(data_path):
     file.close()
     return lines
 
+
 def load_station_pos(data_path):
     """Load station position.
 
@@ -56,9 +57,9 @@ def load_station_pos(data_path):
     with open(data_path, encoding="utf-8") as file:
         for _, line in enumerate(file):
             line = line.strip("\n").strip()
-            if len(line) <= 0:
-                continue
             line = split_by_space(line)
+            if len(line) != 3:
+                continue
             station_name = line[0]
             x = float(line[1]) / 3000
             y = float(line[2]) / 1978

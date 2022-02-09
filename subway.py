@@ -16,6 +16,7 @@ def query_shortes_path(start, end):
         ansy.append(station_pos[station.name][1])
     return ansx, ansy
 
+
 def query_travel_path(start):
     lines = utils.load_lines("data/beijing-subway.txt")
     station_pos = utils.load_station_pos("data/beijing-subway-pos.txt")
@@ -26,6 +27,7 @@ def query_travel_path(start):
         ansx.append(station_pos[station][0])
         ansy.append(station_pos[station][1])
     return ansx, ansy
+
 
 def print_path(subway_sys, start, end):
     """
@@ -81,6 +83,8 @@ def main():
     supported operation:
         subway.py /b <start_station_name> <end_station_name>
     """
+    ansx, ansy = query_travel_path('中关村')
+    print(ansx)
     lines = utils.load_lines("data/beijing-subway.txt")
     subway = SubwaySys(lines)
     if len(sys.argv) == 4 and sys.argv[1] == "/b":
