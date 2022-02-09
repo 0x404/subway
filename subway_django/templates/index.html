@@ -130,7 +130,21 @@
                      data:{csrfmiddlewaretoken:'{{ csrf_token }}'}
                 })
 
-            function paint_point(x, y){
+            function paint_point_now(x, y){
+                let TRUE_WIDTH = 1200;
+                let TRUE_HEIGHT = 792;
+                x = x * TRUE_WIDTH;
+                y = y * TRUE_HEIGHT;
+                var canvas = document.getElementById('myCanvas');
+                var ctx = canvas.getContext('2d');
+                ctx.beginPath();
+                ctx.arc(x, y, 6, 0, 2*Math.PI);
+                ctx.fillStyle="rgba(255,0,0,1)";
+                ctx.fill();
+                ctx.strokeStyle="rgba(255,0,0,1)";
+                ctx.stroke();
+            }
+           function paint_point_ls(x, y){
                 let TRUE_WIDTH = 1200;
                 let TRUE_HEIGHT = 792;
                 x = x * TRUE_WIDTH;
@@ -143,8 +157,7 @@
                 ctx.fill();
                 ctx.strokeStyle="rgba(0,0,0,1)";
                 ctx.stroke();
-            }
-
+             }
            function clear_canvas(){
                 var canvas = document.getElementById('myCanvas');
                 var cxt=c.getContext('2d');
@@ -178,9 +191,14 @@
                             ypath = resp.data["ypath"];
                             let len = xpath.length;
                             let i = 0;
+                            let ls = -1;
                             var timer = setInterval(function () {
-                                paint_point(xpath[i], ypath[i]);
+                                paint_point_now(xpath[i], ypath[i]);
+                                ls = i-1;
                                 i++;
+                                if(ls >= 0){
+                                paint_point_ls(xpath[ls], ypath[ls])
+                                }
                                 if(i >= len){
                                     clearInterval(timer);
                                 }
@@ -213,8 +231,14 @@
                             ypath = resp.data["ypath"];
                             let len = xpath.length;
                             let i = 0;
+                            let ls = -1;
                             var timer = setInterval(function () {
-                                paint_point(xpath[i], ypath[i]);
+                                paint_point_now(xpath[i], ypath[i]);
+                                ls = i-1;
+                                if(ls >= 0)
+                                {
+                                    paint_point_ls(xpath[ls], ypath[ls])
+                                }
                                 i++;
                                 if(i >= len){
                                     clearInterval(timer);
