@@ -130,19 +130,13 @@
                      data:{csrfmiddlewaretoken:'{{ csrf_token }}'}
                 })
 
-            //宽度1200， 高度695
             function paint_point(x, y){
-                /**
-                 * x，y均为比例x为距离左边占比例，y为距离上面占比例
-                 */
                 let TRUE_WIDTH = 1200;
                 let TRUE_HEIGHT = 792;
                 x = x * TRUE_WIDTH;
                 y = y * TRUE_HEIGHT;
                 var canvas = document.getElementById('myCanvas');
                 var ctx = canvas.getContext('2d');
-                //从x, y的位置为圆心，6为半径，画一个从0-2π的圆
-                //加入beginPath()，防止移动画笔的过程的过程之中进行了绘图
                 ctx.beginPath();
                 ctx.arc(x, y, 6, 0, 2*Math.PI);
                 ctx.fillStyle="rgba(0,0,0,1)";
@@ -151,6 +145,13 @@
                 ctx.stroke();
             }
 
+           function clear_canvas(){
+                var canvas = document.getElementById('myCanvas');
+                var cxt=c.getContext('2d');
+                c.height=c.height;
+           }
+
+
             {#paint_point(1200 * 837 / 1500, 695 * 702 / 871);#}
 
             $('#top_cancel').click(function () {
@@ -158,7 +159,6 @@
                 $('#end_stop').val('');
             })
 
-            //获取两个站之间最短路径
             $("#query_shortest").click(function () {
                 let start_stop = $("#start_stop").val();
                 let end_stop = $("#end_stop").val();
@@ -171,6 +171,7 @@
                     type:'POST',
                     data:postData,
                     success:function (arg) {
+                        clear_canvas();
                         var resp = JSON.parse(arg);
                         if(resp.code === 200){
                             xpath = resp.data["xpath"];
@@ -183,7 +184,7 @@
                                 if(i >= len){
                                     clearInterval(timer);
                                 }
-                            }, 500);
+                            }, 100);
                         }else if(resp.code === 201){
                             window.alert(resp.msg)
                         }
@@ -192,7 +193,6 @@
                 })
             })
 
-            //获取从某个站点出发可到达的所有站
             $("#calcel2").click(function () {
                 $('#start_stop2').val('');
             });
@@ -208,6 +208,7 @@
                     success: function (arg) {
                         var resp = JSON.parse(arg);
                         if(resp.code === 200){
+                            clear_canvas();
                             xpath = resp.data["xpath"];
                             ypath = resp.data["ypath"];
                             let len = xpath.length;
@@ -218,7 +219,7 @@
                                 if(i >= len){
                                     clearInterval(timer);
                                 }
-                            }, 500);
+                            }, 50);
                         }else if(resp.code === 201){
                             window.alert(resp.msg)
                         }
