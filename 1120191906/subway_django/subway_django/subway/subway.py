@@ -1,7 +1,7 @@
 """subway"""
 import sys
-from .core import utils
-from .core.model import SubwaySys
+from core import utils
+from core.model import SubwaySys
 
 
 def query_shortes_path(start, end):
@@ -113,4 +113,5 @@ def main():
 
 
 if __name__ == "__main__":
+    query_travel_path('中关村')
     main()

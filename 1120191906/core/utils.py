@@ -59,7 +59,7 @@ def load_station_pos(data_path):
             line = line.strip("\n").strip()
             line = split_by_space(line)
             if len(line) != 3:
-                continue
+                print(line)
             station_name = line[0]
             x = float(line[1]) / 3000
             y = float(line[2]) / 1978
