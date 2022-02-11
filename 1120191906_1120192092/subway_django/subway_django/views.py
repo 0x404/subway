@@ -21,7 +21,7 @@ def get_shortest(req):
 
     try:
         data = {}
-        ansx, ansy = subway.query_shortes_path(start, end)
+        ansx, ansy = subway.query_shortest_path(start, end)
         data["xpath"] = ansx
         data["ypath"] = ansy
         res["data"] = data

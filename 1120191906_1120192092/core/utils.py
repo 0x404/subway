@@ -61,9 +61,9 @@ def load_station_pos(data_path):
             if len(line) != 3:
                 print(line)
             station_name = line[0]
-            x = float(line[1]) / 3000
-            y = float(line[2]) / 1978
-            station_pos[station_name] = [x, y]
+            position_x = float(line[1]) / 3000
+            position_y = float(line[2]) / 1978
+            station_pos[station_name] = [position_x, position_y]
     return station_pos
 
 

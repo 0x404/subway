@@ -1,11 +1,20 @@
 """subway"""
-from re import S
 import sys
 from core import utils
 from core.model import SubwaySys
 
 
-def query_shortes_path(start, end):
+def query_shortest_path(start, end):
+    """Query shortest path.
+
+    Args:
+        start: start station name.
+        end: end station name.
+
+    Return:
+        ansx: x position list.
+        ansy: y position list.
+    """
     lines = utils.load_lines("data/beijing-subway.txt")
     station_pos = utils.load_station_pos("data/beijing-subway-pos.txt")
     subway = SubwaySys(lines)
@@ -18,6 +27,15 @@ def query_shortes_path(start, end):
 
 
 def query_travel_path(start):
+    """Query travel path.
+
+    Args:
+        start: start station name.
+
+    Return:
+        ansx: x position list.
+        ansy: y position list.
+    """
     lines = utils.load_lines("data/beijing-subway.txt")
     station_pos = utils.load_station_pos("data/beijing-subway-pos.txt")
     subway = SubwaySys(lines)
@@ -83,8 +101,6 @@ def main():
     supported operation:
         subway.py /b <start_station_name> <end_station_name>
     """
-    ansx, ansy = query_travel_path('中关村')
-    print(ansx)
     lines = utils.load_lines("data/beijing-subway.txt")
     subway = SubwaySys(lines)
     if len(sys.argv) == 4 and sys.argv[1] == "/b":
