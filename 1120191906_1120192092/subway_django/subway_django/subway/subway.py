@@ -70,7 +70,7 @@ def test_by_file(subway_sys, file_path):
         None.
     """
     path = utils.load_test_file(file_path)
-    res = subway_sys.test_by_file(path)
+    res = subway_sys.walk_side(path)
     print(res["stats"])
     if res["stats"] == "false":
         print("遗漏车站:", res["miss_st"])
