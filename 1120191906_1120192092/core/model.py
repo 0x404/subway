@@ -194,7 +194,7 @@ class SubwaySys:
             start = start.name
         return solution.travel_path_from(start, self.nexto, self.lines)
 
-    def test_by_file(self, path):
+    def walk_side(self, path):
         """Test by test file.
 
         Args:
