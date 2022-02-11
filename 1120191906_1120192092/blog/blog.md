@@ -137,10 +137,82 @@ web程序活动图如下
 
 为保证每次向服务器提交的代码都符合规范，我们制定了`pre_commit`脚本，该脚本会使用`black`和`pylint`对所提交代码进行分析，每次提交都需要保证通过该脚本的代码分析，从而保持代码风格的一致性和规范性。
 
+## 9. git提交规范
 
-## 9. 界面设计
+为保证git提交的历史较容易追溯和明确修改内容，我们制定了如下git提交规范：
 
-### 9.1 GUI界面设计
+### 提交信息格式
+* 每个git commit提交信息由`header`、`body`和`footer`三部分组成
+
+* `body`和`footer`可以省略，`header`不可省略
+
+* `header`由三个部分组成：`type`，`scope`，`subject`
+
+* `scope`可省略，`type`和`subject`不可省略
+
+  
+提交格式如下所示：
+
+```
+<type>(<scope>): <subject>
+<BLANK LINE>
+<body>
+<BLANK LINE>
+<footer>
+```
+
+**参考提交格式**：
+
+```
+docs(blog): update blog of week1
+```
+
+```
+test(model): add pytest on shortest path
+
+In order to improve code instructions, the black box test method is used to design test cases 
+```
+
+
+### Header格式
+
+#### type
+
+* docs: 对blog或者readme等文档进行修改
+* fix: 修复bug
+* style: 调整代码或者注释格式，不改变代码实际功能
+* test: 增加或者修改测试文件
+* feat: 增加新的功能点
+* perf: 提高代码性能
+* refactor: 重构代码（即没有修复bug也没有增加功能点）
+
+#### scope
+
+* 本次提交影响的范围，scope的内容可以省略
+* 在本项目中，scope可以为：
+  * core
+  * model
+  * utils
+  * subway
+  * ...
+* 如果觉得较难确定scope，可以不写
+
+#### subject
+
+* subject中填写本次提交的主题
+* 第一个字母不要大写
+* 结尾不加.(句号)
+
+
+### body格式（可省略）
+
+### footer格式（可省略）
+
+
+
+## 10. 界面设计
+
+### 10.1 GUI界面设计
 
 #TODO
 
@@ -148,9 +220,9 @@ web程序活动图如下
 
 \- **界面模块与其它模块的对接**：详细地描述UI模块的设计与其他模块的对接，并在博客中截图实现的功能。界面/控制/数据模块体现了 [MVC 的设计模式](https://en.wikipedia.org/wiki/Model–view–controller)了么？
 
-### 9.2 WEB界面设计
+### 10.2 WEB界面设计
 
-#### 9.2.1 详细设计过程
+#### 10.2.1 详细设计过程
 WEB界面的设计过程，主要先考虑站点显示功能的实现。当时想到一个比较简单的方法，设置一个画布，把北京地铁的图片作为画布的背景，然后在画布上进行打点画圆，通过不断地打点即可实现一个地铁站遍历的效果。
 
 但是要完成这个功能首先需要确定的是打点的坐标从哪来，最后的实现方法为通过图片的像素逐一确定每个地铁站的像素坐标，然后与地铁背景图标坐标成等比例缩放，得到每个站点在图片上的相对坐标，然后利用相对坐标打点画图实现。
@@ -168,7 +240,7 @@ WEB前端界面迭代过程：
 当前WEB前端界面如下所示：
 ![](http://image-hosting-404.oss-cn-beijing.aliyuncs.com/img/web_pic2.png)
 
-#### 9.2.2 界面模块与其他模块的对接
+#### 10.2.2 界面模块与其他模块的对接
 * 服务已部署于云服务器上，可以直接访问http://0x404.tech/
 
 由于WEB后端采用Django框架，所以只需要配置Django路由和View模块即可完成后端处理前端的数据。
@@ -185,8 +257,8 @@ WEB前端界面迭代过程：
 
 
 
-## 10. 结对过程
+## 11. 结对过程
 
 
 
-## 11. 收获体会
+## 12. 收获体会
