@@ -62,7 +62,9 @@ web端服务已经部署在云服务器上，请访问http://0x404.tech, 进行�
 
 ## 4. 需求分析
 
-#### 功能需求
+#### 4. 1功能需求
+
+##### 4.1.1 第一阶段
 
 - 输入起点、终点 输出一条有效路径 输出换乘站换乘的线路名称
 - 输入一个站点 找到一条路径漫游整个地铁线路
@@ -76,18 +78,38 @@ web端服务已经部署在云服务器上，请访问http://0x404.tech, 进行�
   - 通过宽搜找到最短路，逆序存储路线
   - 路线解码，如果一个站点前后的边所属路线不一致，则在此站点换乘
 
-#### DFD图
+##### 4.1.2 第二阶段
+
+* 输入起点，给出一条遍历所有站点的路线
+  * 找到经过站点数量最少的路线
+  * 如何找到更优的方法
+
+##### 4.1.3 第三阶段
+
+* 将前面两个阶段的功能以图形界面展示
+* 给定一个站点名，确定该站点在图像上的位置
+  * 使用像素坐标作为站点在图像上的位置
+  * 计算像素坐标的相对坐标，以适应不同图像大小
+* 给定一个相对坐标列表，在图像上打印坐标列表中的每个坐标点
+* 实现从一个站点名列表到站点相对坐标列表的转换
+* 实现用户友好的查询站点等信息的提交界面
+
+#### 4. 2DFD图
 
 - 顶层数据流图
   ![DFD1](https://image-hosting-404.oss-cn-beijing.aliyuncs.com/img/DFD1.jpg)
 - 二层数据流图
   ![DFD2](https://image-hosting-404.oss-cn-beijing.aliyuncs.com/img/DFD2.jpg)
 
-#### 性能需求
+#### 4.3 用例图
+
+![](http://image-hosting-404.oss-cn-beijing.aliyuncs.com/img/example.png)
+
+#### 4.4 性能需求
 
 - 在人能够承受的时间范围内找到可行路线
 
-#### 正确性需求
+#### 4.5 正确性需求
 
 - 用户输入正确是能找到一条可以乘坐的路线
 - 不出现错误的站点连接
@@ -99,7 +121,9 @@ web端服务已经部署在云服务器上，请访问http://0x404.tech, 进行�
 
 ### 5.1 核心程序接口
 
-## Station
+#### 5.1.1 概述
+
+##### Station
 
 对地铁站进行封装
 
@@ -113,7 +137,7 @@ web端服务已经部署在云服务器上，请访问http://0x404.tech, 进行�
 | name(self)     |          | str    | 获得station_name |
 | is_trans(self) |          | Bool   | 获得trans        |
 
-## Edge
+##### Edge
 
 两个相邻站点间的连接
 
@@ -127,7 +151,7 @@ web端服务已经部署在云服务器上，请访问http://0x404.tech, 进行�
 | station_to(self) |          | str    | 获得st_j         |
 | belong_to(self)  |          | str    | 获得line_belongs |
 
-## Line
+##### Line
 
 一条地铁线路，记录线路名、环状信息和所有站点
 
@@ -143,7 +167,7 @@ web端服务已经部署在云服务器上，请访问http://0x404.tech, 进行�
 | is_ring(self)      |          | Bool   | 获得ring      |
 | station_list(self) |          | list   | 获得st_list   |
 
-## SubwaySys
+##### SubwaySys
 
 地铁系统
 
@@ -163,7 +187,7 @@ web端服务已经部署在云服务器上，请访问http://0x404.tech, 进行�
 | shortest_path(self, start, end)                | (Station,Station)     | list   | 从Start到End搜索一条经历最少站点的路   |
 | walk_side(self, file_path)                     | (str)                 |        | 读测试文件路径，进行测试               |
 
-### utils
+##### utils
 
 | 接口名称                    | 参数列表 | 返回值     | 描述                                               |
 | --------------------------- | -------- | ---------- | -------------------------------------------------- |
@@ -172,7 +196,7 @@ web端服务已经部署在云服务器上，请访问http://0x404.tech, 进行�
 | load_test_file(data_path)   | (str)    | list[str]  | 根据空格分割字符串                                 |
 | load_test_file(data_path)   | (str)    | list[str]  | 从测试文件中找到漫游路径                           |
 
-## Solution
+##### Solution
 
 | 接口名称                              | 参数列表       | 返回值    | 描述                                 |
 | ------------------------------------- | -------------- | --------- | ------------------------------------ |
@@ -186,27 +210,17 @@ web端服务已经部署在云服务器上，请访问http://0x404.tech, 进行�
 
 
 
-#### 5.1.1 概述
+#### 5.1.2 UML
 
-#### 5.1.2 UML图
+类图：
 
-#### uml类图
+![](http://image-hosting-404.oss-cn-beijing.aliyuncs.com/img/uml1.png)
 
-![CD1](https://image-hosting-404.oss-cn-beijing.aliyuncs.com/img/CD0.3.jpg)
+泳道图：
 
-#### 5.1.3 流程图（可能不需要）
+![](http://image-hosting-404.oss-cn-beijing.aliyuncs.com/img/shortest_act.png)
 
-### 5.2 GUI程序接口
-
-
-
-#### 5.2.1 概述
-
-#### 5.2.2 UML
-
-#### 5.2.3 流程图（可能不需要）
-
-### 5.3 web程序接口
+### 5.2 web程序接口
 
 ### 5.3.1 概述
 
@@ -245,6 +259,7 @@ web程序活动图如下
 ![](http://image-hosting-404.oss-cn-beijing.aliyuncs.com/img/web_pic1.png)
 
 ## 6. 测试
+
 我们本次结对项目的测试基于[pytest](https://docs.pytest.org/en/6.2.x/)进行，该工具能自动检查代码中的测试模块，通过`xxx_test.py`标识一个测试文件，`test_yyy()`标识一个测试函数，pytest会扫描目录中所有以`_test`为后缀的文件，并执行该文件中的所有测试函数，自动化完成测试。
 
 为保证代码的正确性，我们要求每完成一个新的功能，都需要由功能的实现者实现该模块的测试函数编写，并制定了`pre_commit`脚本，在每次提交前利用`pytest`完成所有模块的测试检查，只有所有测试通过后才能提交。
@@ -327,7 +342,7 @@ web程序活动图如下
 
 为保证git提交的历史较容易追溯和明确修改内容，我们制定了如下git提交规范：
 
-### 提交信息格式
+### 9. 1提交信息格式
 
 * 每个git commit提交信息由`header`、`body`和`footer`三部分组成
 
@@ -361,10 +376,9 @@ test(model): add pytest on shortest path
 In order to improve code instructions, the black box test method is used to design test cases 
 ```
 
+### 9.2Header格式
 
-### Header格式
-
-#### type
+#### 9.2.1 type
 
 * docs: 对blog或者readme等文档进行修改
 * fix: 修复bug
@@ -374,7 +388,7 @@ In order to improve code instructions, the black box test method is used to desi
 * perf: 提高代码性能
 * refactor: 重构代码（即没有修复bug也没有增加功能点）
 
-#### scope
+#### 9.2.2 scope
 
 * 本次提交影响的范围，scope的内容可以省略
 * 在本项目中，scope可以为：
@@ -385,30 +399,25 @@ In order to improve code instructions, the black box test method is used to desi
   * ...
 * 如果觉得较难确定scope，可以不写
 
-#### subject
+#### 9.2.3 subject
 
 * subject中填写本次提交的主题
 * 第一个字母不要大写
 * 结尾不加.(句号)
 
+### 9.3body格式（可省略）
 
-### body格式（可省略）
+该格式在本项目中可以省略
 
-### footer格式（可省略）
+### 9.4footer格式（可省略）
+
+该格式在本项目中可以省略
 
 
 
 ## 10. 界面设计
 
-### 10.1 GUI界面设计
-
-#TODO
-
-\- **界面模块的详细设计过程**：你的程序有用户界面么？在博客中详细介绍界面模块是如何设计的。
-
-\- **界面模块与其它模块的对接**：详细地描述UI模块的设计与其他模块的对接，并在博客中截图实现的功能。界面/控制/数据模块体现了 [MVC 的设计模式](https://en.wikipedia.org/wiki/Model–view–controller)了么？
-
-### 10.2 WEB界面设计
+### 10.1 WEB界面设计
 
 #### 10.2.1 详细设计过程
 WEB界面的设计过程，主要先考虑站点显示功能的实现。当时想到一个比较简单的方法，设置一个画布，把北京地铁的图片作为画布的背景，然后在画布上进行打点画圆，通过不断地打点即可实现一个地铁站遍历的效果。
@@ -447,6 +456,8 @@ WEB前端界面迭代过程：
 
 ## 11. 结对过程
 
+由于本项目大部分在寒假完成，故采用线上会议方式完成结对编程：
 
+![](http://image-hosting-404.oss-cn-beijing.aliyuncs.com/img/meeting.png)
 
 ## 12. 收获体会
