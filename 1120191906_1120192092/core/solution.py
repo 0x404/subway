@@ -136,7 +136,7 @@ def cost_path(st_name,next_to):
     st_len = len(st_name)
     cost = 0
     for i in range(2,st_len - 1):
-        if get_line_belong(st_name[i],st_name[i-1],nextto) == get_line_belong(st_name[i],st_name[i+1],nextto):
+        if get_line_belong(st_name[i],st_name[i-1],next_to) == get_line_belong(st_name[i],st_name[i+1],next_to):
             cost = cost + 1
         else:
             cost = cost + 3
