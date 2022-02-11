@@ -124,6 +124,26 @@ def shortest_path(start, end, nexto):
     path.reverse()
     return path
 
+def cost_path(st_name,next_to):
+    """Whther station i is next to station j.
+        Args:
+            st_name: list, station name.
+            nex_to: map, adjacency table of subway system.
+
+        Return:
+            cost: path cost
+        """
+    st_len = len(st_name)
+    cost = 0
+    for i in range(2,st_len - 1):
+        if get_line_belong(st_name[i],st_name[i-1],nextto) == get_line_belong(st_name[i],st_name[i+1],nextto):
+            cost = cost + 1
+        else:
+            cost = cost + 3
+    cost = cost + 2
+    return cost
+
+
 
 def travel_path_from(start, nexto, lines):
     """Get travel path.
@@ -151,8 +171,8 @@ def travel_path_from(start, nexto, lines):
             path = shortest_path(cur_start, line.start, nexto)
             station_list = [st.name for st in line.station_list]
             path = path + station_list[1:]
-            if len(path) < min_cost:
-                min_cost = len(path)
+            if cost_path(path,nexto) < min_cost:
+                min_cost = cost_path(path,nexto)
                 nex_start = line.end
                 traveled_line = line.name
                 traveled_path = path[:]
@@ -160,8 +180,8 @@ def travel_path_from(start, nexto, lines):
             path = shortest_path(cur_start, line.end, nexto)
             station_list = [st.name for st in line.station_list]
             path = path + station_list[line.length - 2 :: -1]
-            if len(path) < min_cost:
-                min_cost = len(path)
+            if cost_path(path,nexto) < min_cost:
+                min_cost = cost_path(path,nexto)
                 nex_start = line.start
                 traveled_line = line.name
                 traveled_path = path[:]
