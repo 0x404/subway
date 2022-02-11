@@ -22,14 +22,14 @@
 
 ​	完成了命令行参数的漫游，通过\b参数完成两站点间线路查询，\z参数完成通过文件测试，\a参数完成从一个点线路漫游。
 
-| ![](..\images\gui_result.png) | ![](..\images\gui_result_z.png) | ![](..\images\gui_result_a.png) |
-| ----------------------------- | ------------------------------- | ------------------------------- |
+| ![](http://image-hosting-404.oss-cn-beijing.aliyuncs.com/img/gui_result.png) | ![](http://image-hosting-404.oss-cn-beijing.aliyuncs.com/img/gui_result_z.png) | ![](http://image-hosting-404.oss-cn-beijing.aliyuncs.com/img/gui_result_a.png) |
+| ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
 
 
 
 ### 1.2 GUI成果
 
-![image-20220211193944688](C:\Users\Faller\AppData\Roaming\Typora\typora-user-images\image-20220211193944688.png)
+![](http://image-hosting-404.oss-cn-beijing.aliyuncs.com/img/GUI.jpg)
 
 ### 1.3 web端成果
 
@@ -229,20 +229,45 @@ web程序活动图如下
 ![](http://image-hosting-404.oss-cn-beijing.aliyuncs.com/img/web_pic1.png)
 
 ## 6. 测试
-我们本次结对项目的测试基于`pytest`进行，该工具能自动检查代码中的测试模块，执行测试函数，自动化完成测试。
+我们本次结对项目的测试基于[pytest](https://docs.pytest.org/en/6.2.x/)进行，该工具能自动检查代码中的测试模块，通过`xxx_test.py`标识一个测试文件，`test_yyy()`标识一个测试函数，pytest会扫描目录中所有以`_test`为后缀的文件，并执行该文件中的所有测试函数，自动化完成测试。
 
 为保证代码的正确性，我们要求每完成一个新的功能，都需要由功能的实现者实现该模块的测试函数编写，并制定了`pre_commit`脚本，在每次提交前利用`pytest`完成所有模块的测试检查，只有所有测试通过后才能提交。
 
+有关测试的具体信息请见[测试文档](测试文档.md)
+
 ### 6.1 单元测试
 
+单元测试使用边界值分析法和等价类方法，设计黑盒测试用例，对每个单元进行测试。
 
+详细的单元测试方法和测试用例请见：[单元测试文档](测试文档.md)
 
 ### 6.2 功能测试
 
-#### 代码测试
+#### 6.2.1 最短路径查询功能测试
 
-* 使用pylint进行单元测试与集成测试，通过`xxx_test.py`标识一个测试文件，`test_yyy()`标识一个测试函数，pytest会扫描目录中所有以`_test`为后缀的文件，并执行该文件中的所有测试函数
-* [详细信息](https://docs.pytest.org/en/6.2.x/)
+* 测试用例一，出发点：良乡大学城，终点：中关村
+
+  <img src="http://image-hosting-404.oss-cn-beijing.aliyuncs.com/img/test1.png" style="zoom:67%;" />
+
+* 测试用例二，出发点：中关村，终点：中关村
+
+  <img src="http://image-hosting-404.oss-cn-beijing.aliyuncs.com/img/test2.png" style="zoom:67%;" />
+
+* 测试用例三，出发点：外星，终点：中关村
+
+  <img src="http://image-hosting-404.oss-cn-beijing.aliyuncs.com/img/test3.png" style="zoom:67%;" />
+
+* 测试用例四，出发点：西土城，终点：金台路
+
+  ![](http://image-hosting-404.oss-cn-beijing.aliyuncs.com/img/test4.png)
+
+#### 6.2.2 遍历路径查询功能测试
+
+* 出发站：天安门东
+
+  <img src="http://image-hosting-404.oss-cn-beijing.aliyuncs.com/img/test5.png" style="zoom:67%;" />
+
+#### 代码测试
 
 #### 测试说明
 
@@ -311,9 +336,9 @@ web程序活动图如下
 
 ## 7. 性能测试
 
- 	程序通过cProfile进行性能分析，并通过可视化工具判断不同代码块耗时所占不同比重。
+程序通过cProfile进行性能分析，并通过可视化工具判断不同代码块耗时所占不同比重。
 
-![](../images/profile.png)
+![](http://image-hosting-404.oss-cn-beijing.aliyuncs.com/img/profile.png)
 
 ​	由分析结果可知，在程序中，最耗时的部分是查找最短路的部分，在一次漫游中调用过多次查询最短路导致时间耗费过多，在处理过程中进行简化，通过减少最短路查询的调用降低程序性能的消耗。
 
